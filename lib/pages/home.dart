@@ -43,9 +43,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: pages[currentPageIndex],
-      bottomNavigationBar: FloatingBottomNavBar(
-        onDestinationSelected: onDestinationSelected,
+      body: Stack(
+        children: [
+          pages[currentPageIndex],
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: FloatingBottomNavBar(
+                  onDestinationSelected: onDestinationSelected))
+        ],
       ),
     );
   }

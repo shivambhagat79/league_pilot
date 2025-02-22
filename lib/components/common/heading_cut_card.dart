@@ -13,7 +13,7 @@ class HeadingCutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 250,
       margin: EdgeInsets.all(10),
       width: double.maxFinite,
       decoration: BoxDecoration(
