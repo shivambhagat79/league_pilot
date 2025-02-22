@@ -13,81 +13,40 @@ class MatchContent extends StatelessWidget {
       itemBuilder: (context, index) {
         final match = matches[index];
 
-        if (match is LiveMatchInfo) {
-          return _buildLiveMatchContainer(match);
-        } else if (match is UpcomingMatchInfo) {
-          return _buildUpcomingMatchContainer(match);
-        } else {
-          return const SizedBox(); // Handles unexpected cases
-        }
+        return AnimatedScaleContainer(
+          child: match is LiveMatchInfo
+              ? _buildLiveMatchContainer(match)
+              : _buildUpcomingMatchContainer(match),
+        );
       },
     );
   }
 
-  // Live Match Container (Displays scores)
   Widget _buildLiveMatchContainer(LiveMatchInfo match) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5, spreadRadius: 2),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Date, Time & Sport at the top center
-          Text(
-            "${match.date} | ${match.time} | ${match.sport}",
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.teal),
-          ),
-          const SizedBox(height: 8),
-
-          // Match Row (Logos, Names, Scores, and VS)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildTeamColumn(match.team1Logo, match.team1Name),
-
-              // Score and "VS" in the middle
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        match.team1Score.toString(),
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        "vs",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        match.team2Score.toString(),
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              _buildTeamColumn(match.team2Logo, match.team2Name),
-            ],
-          ),
-
-          // Category Indicator (Live Now)
-          _buildCategoryIndicator("Live Now", Colors.teal),
-        ],
+    return _buildMatchContainer(
+      match,
+      "Live Now",
+      Colors.teal,
+      Text(
+        "${match.team1Score} vs ${match.team2Score}",
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
       ),
     );
   }
 
-  // Upcoming Match Container (No Scores)
   Widget _buildUpcomingMatchContainer(UpcomingMatchInfo match) {
+    return _buildMatchContainer(
+      match,
+      "Upcoming",
+      Colors.orange,
+      const Text(
+        "vs",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget _buildMatchContainer(dynamic match, String category, Color color, Widget scoreWidget) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
@@ -100,38 +59,29 @@ class MatchContent extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Date, Time & Sport at the top center
           Text(
             "${match.date} | ${match.time} | ${match.sport}",
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.orange),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color),
           ),
           const SizedBox(height: 8),
-
-          // Match Row (Logos, Names, No Scores)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _buildTeamColumn(match.team1Logo, match.team1Name),
-              const Text(
-                "vs",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
-              ),
+              scoreWidget,
               _buildTeamColumn(match.team2Logo, match.team2Name),
             ],
           ),
-
-          // Category Indicator (Upcoming)
-          _buildCategoryIndicator("Upcoming", Colors.orange),
+          _buildCategoryIndicator(category, color),
         ],
       ),
     );
   }
 
-  // Common method for team logos and names
   Widget _buildTeamColumn(String logoUrl, String teamName) {
     return Column(
       children: [
-        Image.network(logoUrl, width: 50, height: 50), // Team Logo
+        Image.network(logoUrl, width: 50, height: 50),
         const SizedBox(height: 5),
         Text(
           teamName,
@@ -141,7 +91,6 @@ class MatchContent extends StatelessWidget {
     );
   }
 
-  // Category Indicator (Live Now / Upcoming)
   Widget _buildCategoryIndicator(String category, Color color) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
@@ -158,7 +107,34 @@ class MatchContent extends StatelessWidget {
   }
 }
 
-// Live Match Model (Includes Scores)
+class AnimatedScaleContainer extends StatefulWidget {
+  final Widget child;
+
+  const AnimatedScaleContainer({super.key, required this.child});
+
+  @override
+  _AnimatedScaleContainerState createState() => _AnimatedScaleContainerState();
+}
+
+class _AnimatedScaleContainerState extends State<AnimatedScaleContainer> {
+  double _scale = 1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _scale = 0.95),
+      onTapUp: (_) => setState(() => _scale = 1.0),
+      onTapCancel: () => setState(() => _scale = 1.0),
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 150),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+// Models
 class LiveMatchInfo {
   final String team1Name;
   final String team2Name;
@@ -183,7 +159,6 @@ class LiveMatchInfo {
   });
 }
 
-// Upcoming Match Model (No Scores)
 class UpcomingMatchInfo {
   final String team1Name;
   final String team2Name;
