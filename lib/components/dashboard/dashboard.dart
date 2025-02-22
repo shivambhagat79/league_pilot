@@ -16,12 +16,13 @@ class _DashboardState extends State<Dashboard> {
         child: Column(
           children: [
             HeadingCutCard(
-                heading: "DASHBOARD",
-                tail: Container(),
-                child: Container(
-                  height: 200,
-                  // color: Colors.white,
-                )),
+              heading: "DASHBOARD",
+              tail: Container(),
+              child: Container(
+                height: 200,
+                // color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),

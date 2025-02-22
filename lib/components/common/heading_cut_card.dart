@@ -60,6 +60,7 @@ class HeadingCutCard extends StatelessWidget {
                           topLeft: Radius.circular(20),
                         ),
                       ),
+                      child: tail,
                     ),
                   ],
                 ),
