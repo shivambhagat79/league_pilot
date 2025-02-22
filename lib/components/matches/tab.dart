@@ -59,7 +59,7 @@ class TabButtons extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.live_tv, size: 24),
+                        Icon(Icons.fiber_manual_record, color: Colors.red, size: 24.0),
                         Text("Live Now", style: TextStyle(fontSize: 16)),
                         SizedBox(),
                       ],
@@ -89,7 +89,7 @@ class TabButtons extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.photo_library_outlined, size: 24),
+                       Icon(Icons.schedule, color: Colors.blue, size: 24.0),
                         Text("Upcoming", style: TextStyle(fontSize: 16)),
                         SizedBox(),
                       ],
