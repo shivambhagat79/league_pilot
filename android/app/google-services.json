@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "867475044073",
+    "project_id": "leaguepilot-e1c64",
+    "storage_bucket": "leaguepilot-e1c64.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867475044073:android:d436aba79d1c1321d2a278",
+        "android_client_info": {
+          "package_name": "com.boys.hunger_games"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6CwvkYUUHVdGaIaPfjEcVdIe5HDDYGag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:867475044073:android:e741295bb4f64b0ad2a278",
+        "android_client_info": {
+          "package_name": "com.example.hunger_games"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6CwvkYUUHVdGaIaPfjEcVdIe5HDDYGag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

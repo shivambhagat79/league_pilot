@@ -1,0 +1,2 @@
+C:/Users/sahar/OneDrive/Documents/hunger_games/android/app/.cxx/Debug/6m4o3p6c/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/sahar/OneDrive/Documents/hunger_games/android/app/.cxx/Debug/6m4o3p6c/x86_64/CMakeFiles/rebuild_cache.dir
