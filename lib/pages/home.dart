@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:hunger_games/components/common/floating_bottom_nav_bar.dart';
 import 'package:hunger_games/components/dashboard/dashboard.dart';
 import 'package:hunger_games/components/matches/matches.dart';
@@ -14,6 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarIconBrightness: Brightness.dark));
+  }
+
   int currentPageIndex = 0;
 
   final List<Widget> pages = <Widget>[
