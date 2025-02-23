@@ -19,7 +19,7 @@ class DashboardActivities extends StatelessWidget {
             fontWeight: FontWeight.w100,
             fontFamily: "Overcame",
             fontSize: 18,
-            color: Colors.black.withAlpha(150),
+            color: Colors.white.withAlpha(200),
           ),
         ),
       ),

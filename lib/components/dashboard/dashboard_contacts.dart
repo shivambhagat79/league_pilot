@@ -11,7 +11,7 @@ class DashboardContacts extends StatelessWidget {
       width: double.maxFinite,
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.teal.shade900.withAlpha(230),
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(220),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -46,12 +46,12 @@ class DashboardContacts extends StatelessWidget {
                       Text(
                         " Organising Team:",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   +91 9876543210", style: TextStyle(fontSize: 16)),
+                      Text("   +91 9876543210", style: TextStyle(fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -63,12 +63,12 @@ class DashboardContacts extends StatelessWidget {
                       Text(
                         " Medical Assistance:",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   +91 9876543210", style: TextStyle(fontSize: 16)),
+                      Text("   +91 9876543210", style: TextStyle(fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -80,12 +80,12 @@ class DashboardContacts extends StatelessWidget {
                       Text(
                         " Security:",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   +91 9876543210", style: TextStyle(fontSize: 16)),
+                      Text("   +91 9876543210", style: TextStyle(fontSize: 14)),
                     ],
                   ),
                   Row(
@@ -97,13 +97,13 @@ class DashboardContacts extends StatelessWidget {
                       Text(
                         " Email:",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       Text("   tournament@leaguepilot.com",
-                          style: TextStyle(fontSize: 16)),
+                          style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 ],
