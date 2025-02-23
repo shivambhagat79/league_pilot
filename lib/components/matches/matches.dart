@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/matches/matchesAppBar.dart';
 import 'package:hunger_games/components/matches/tab.dart';
-import 'package:hunger_games/components/matches/heading.dart';
 import 'package:hunger_games/components/matches/content.dart';
 
 class Matches extends StatefulWidget {
@@ -58,9 +57,15 @@ class _MatchesState extends State<Matches> {
 
                 // Display Content Based on Selection
                 _buildContent(),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text("© League Pilot. All rights reserved."),
+                ),
+                SizedBox(height: 80),
               ],
             ),
-          )
+          ),
+          
         ],
       ),
     );

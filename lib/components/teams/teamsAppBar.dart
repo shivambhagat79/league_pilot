@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MatchesAppBar extends StatelessWidget {
-  const MatchesAppBar({super.key});
+class TeamsAppBar extends StatelessWidget {
+  const TeamsAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class MatchesAppBar extends StatelessWidget {
       title: Padding(
         padding: const EdgeInsets.only(top: 10.0), // Moves text down slightly
         child: Text(
-          "MATCHES",
+          "TEAMS",
           style: TextStyle(
               fontWeight: FontWeight.w100,
               fontFamily: "Overcame",
