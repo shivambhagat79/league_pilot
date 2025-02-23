@@ -25,7 +25,7 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
         borderRadius: BorderRadius.circular(100.0),
         boxShadow: [
           BoxShadow(
@@ -63,7 +63,8 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
+                      color:
+                          Theme.of(context).colorScheme.surface.withAlpha(230),
                       borderRadius: BorderRadius.circular(100),
                     ),
                   ),
@@ -80,8 +81,11 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
                         _icons[index],
                         size: 30,
                         color: isSelected
-                            ? Theme.of(context).colorScheme.onPrimary
-                            : Colors.black54,
+                            ? Theme.of(context).colorScheme.onSurfaceVariant
+                            : Theme.of(context)
+                                .colorScheme
+                                .surface
+                                .withAlpha(190),
                       ),
                       onPressed: () {
                         setState(() {
