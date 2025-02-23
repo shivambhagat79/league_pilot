@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/dashboard/dashboard_actions.dart';
 import 'package:hunger_games/components/dashboard/dashboard_activities.dart';
+import 'package:hunger_games/components/dashboard/dashboard_contacts.dart';
 import 'package:hunger_games/components/dashboard/dashboard_gallery.dart';
 import 'package:hunger_games/components/dashboard/dashboard_map.dart';
 
@@ -24,6 +25,11 @@ class _DashboardState extends State<Dashboard> {
             DashboardGallery(),
             SizedBox(height: 10),
             DashboardMap(),
+            DashboardContacts(),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: Text("© League Pilot. All rights reserved."),
+            ),
             SizedBox(height: 80),
           ],
         ),
