@@ -8,9 +8,9 @@ class DashboardActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.teal.shade900.withAlpha(30),
+        color: Colors.teal.shade900.withAlpha(70),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -18,6 +18,7 @@ class DashboardActions extends StatelessWidget {
           Container(
             alignment: Alignment.center,
             width: double.maxFinite,
+            margin: EdgeInsets.only(top: 10),
             child: Text(
               "Dashboard Actions",
               style: TextStyle(
@@ -87,6 +88,7 @@ class ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton.tonal(
         style: ButtonStyle(
+          padding: WidgetStateProperty.all(EdgeInsets.all(5)),
           backgroundColor: WidgetStateProperty.all(Colors.white),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
@@ -97,17 +99,16 @@ class ActionButton extends StatelessWidget {
         onPressed: () {
           onPressed();
         },
-        child: Container(
-          height: 60,
-          alignment: Alignment.center,
+        child: SizedBox(
+          height: 40,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               icon,
               Text(
-                text,
+                " " + text,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   // fontFamily: "Overcame",
                   color: Colors.black.withAlpha(190),
                 ),

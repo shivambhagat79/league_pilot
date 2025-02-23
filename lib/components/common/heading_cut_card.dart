@@ -17,7 +17,7 @@ class HeadingCutCard extends StatelessWidget {
       margin: EdgeInsets.all(10),
       width: double.maxFinite,
       decoration: BoxDecoration(
-        color: Colors.teal.shade900.withAlpha(100),
+        color: Colors.teal.shade900.withAlpha(150),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -54,7 +54,7 @@ class HeadingCutCard extends StatelessWidget {
                     Container(
                       height: 45,
                       decoration: BoxDecoration(
-                        color: Colors.teal.shade900.withAlpha(100),
+                        color: Colors.teal.shade900.withAlpha(150),
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(20),
                           topLeft: Radius.circular(20),
@@ -76,7 +76,7 @@ class HeadingCutCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.teal.shade900.withAlpha(100),
+                    color: Colors.teal.shade900.withAlpha(150),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       bottomLeft: Radius.circular(20),
