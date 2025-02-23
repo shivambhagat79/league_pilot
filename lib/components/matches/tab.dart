@@ -31,10 +31,10 @@ class TabButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Main Tab Buttons (Live Now / Upcoming)
+        // Main Tab Buttons (Live Now / Upcoming / Results)
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          height: 80,
+          height: 70, // Reduced height
           width: double.maxFinite,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,12 +55,12 @@ class TabButtons extends StatelessWidget {
                     onTabChange("Live Now");
                   },
                   child: const SizedBox(
-                    height: 60,
+                    height: 50, // Reduced height
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(Icons.fiber_manual_record, color: Colors.red, size: 24.0),
-                        Text("Live Now", style: TextStyle(fontSize: 16)),
+                        Icon(Icons.fiber_manual_record, color: Colors.red, size: 22.0),
+                        Text("Live Now", style: TextStyle(fontSize: 14)),
                         SizedBox(),
                       ],
                     ),
@@ -85,12 +85,42 @@ class TabButtons extends StatelessWidget {
                     onTabChange("Upcoming");
                   },
                   child: const SizedBox(
-                    height: 60,
+                    height: 50, // Reduced height
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                       Icon(Icons.schedule, color: Colors.blue, size: 24.0),
-                        Text("Upcoming", style: TextStyle(fontSize: 16)),
+                        Icon(Icons.schedule, color: Colors.blue, size: 22.0),
+                        Text("Upcoming", style: TextStyle(fontSize: 14)),
+                        SizedBox(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10), // Space between buttons
+
+              // Results Button
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        selectedTab == "Results" ? Colors.teal : Colors.teal[100],
+                    foregroundColor:
+                        selectedTab == "Results" ? Colors.white : Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  onPressed: () {
+                    onTabChange("Results");
+                  },
+                  child: const SizedBox(
+                    height: 50, // Reduced height
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.emoji_events, color: Colors.orange, size: 22.0),
+                        Text("Results", style: TextStyle(fontSize: 14)),
                         SizedBox(),
                       ],
                     ),

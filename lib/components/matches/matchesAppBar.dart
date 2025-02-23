@@ -7,24 +7,31 @@ class MatchesAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       stretch: true,
-      expandedHeight: 200,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      expandedHeight: 75,
+      backgroundColor: Colors.teal.shade900.withAlpha(30),
       pinned: true,
       leading: IconButton(
         icon: Icon(Icons.menu),
         onPressed: () {},
+        color: Colors.black.withAlpha(150),
       ),
       actions: [
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () {},
+          color: Colors.black.withAlpha(150),
         ),
       ],
-      title: Text(
-        "MATCHES",
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+      title: Padding(
+        padding: const EdgeInsets.only(top: 10.0), // Moves text down slightly
+        child: Text(
+          "MATCHES",
+          style: TextStyle(
+              fontWeight: FontWeight.w100,
+              fontFamily: "Overcame",
+              fontSize: 25,
+              color: Colors.black.withAlpha(150),
+            ),
         ),
       ),
       centerTitle: true,
@@ -48,11 +55,13 @@ class MatchesAppBar extends StatelessWidget {
             Colors.black54,
             BlendMode.darken,
           ),
+          /*
           child: Image.asset(
             'assets/images/components/appBar.jpg',
             fit: BoxFit.cover,
             width: double.maxFinite,
           ),
+          */
         ),
       ),
     );

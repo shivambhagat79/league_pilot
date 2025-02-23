@@ -37,7 +37,7 @@ class _MatchesState extends State<Matches> {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                Heading(text: "EXPLORE"),
+                // Heading(text: "EXPLORE"),
 
                 // Tab Buttons (Live Now & Upcoming)
                 TabButtons(
