@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/pages/home.dart';
+// import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 void main() {
   runApp(const MyApp());
