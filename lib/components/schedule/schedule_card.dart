@@ -12,11 +12,12 @@ class ScheduleCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
                 "11:00",
                 style:
-                    TextStyle(fontSize: 18, color: Colors.black.withAlpha(180)),
+                    TextStyle(fontSize: 16, color: Colors.black.withAlpha(180)),
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 3),
@@ -27,7 +28,7 @@ class ScheduleCard extends StatelessWidget {
               Text(
                 "12:00",
                 style:
-                    TextStyle(fontSize: 18, color: Colors.black.withAlpha(180)),
+                    TextStyle(fontSize: 16, color: Colors.black.withAlpha(180)),
               ),
             ],
           ),
@@ -46,7 +47,7 @@ class ScheduleCard extends StatelessWidget {
                     children: [
                       Text(
                         "SUN",
-                        style: TextStyle(fontSize: 16, letterSpacing: 2),
+                        style: TextStyle(fontSize: 14, letterSpacing: 2),
                       ),
                       Text(
                         "Feb 21",
@@ -54,11 +55,12 @@ class ScheduleCard extends StatelessWidget {
                       ),
                       Text(
                         "2025",
-                        style: TextStyle(fontSize: 12, letterSpacing: 3),
+                        style: TextStyle(fontSize: 10, letterSpacing: 3),
                       ),
                     ],
                   ),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
                         "Basketball Men",
@@ -70,12 +72,12 @@ class ScheduleCard extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text("IIT Ropar", style: TextStyle(fontSize: 16)),
-                          Text("  v/s  ", style: TextStyle(fontSize: 10)),
-                          Text("IIT Kanpur", style: TextStyle(fontSize: 16)),
+                          Text("IIT Ropar", style: TextStyle(fontSize: 14)),
+                          Text("  v/s  ", style: TextStyle(fontSize: 8)),
+                          Text("IIT Kanpur", style: TextStyle(fontSize: 14)),
                         ],
                       ),
-                      Text("Football Ground", style: TextStyle(fontSize: 12)),
+                      Text("Football Ground", style: TextStyle(fontSize: 10)),
                     ],
                   ),
                   IconButton.outlined(onPressed: () {}, icon: Icon(Icons.map))
