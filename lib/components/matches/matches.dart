@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hunger_games/components/matches/matchesAppBar.dart';
+import 'package:hunger_games/components/common/custom_scroll_page.dart';
 import 'package:hunger_games/components/matches/tab.dart';
 import 'package:hunger_games/components/matches/content.dart';
 
@@ -24,48 +24,36 @@ class _MatchesState extends State<Matches> {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      thickness: 5,
-      radius: const Radius.circular(10),
-      controller: scrollController,
-      child: CustomScrollView(
-        controller: scrollController,
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          MatchesAppBar(),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                // Heading(text: "EXPLORE"),
+    return Customscrollpage(
+      title: "Matches",
+      child: Column(
+        children: [
+          // Heading(text: "EXPLORE"),
 
-                // Tab Buttons (Live Now & Upcoming)
-                TabButtons(
-                  selectedTab: selectedTab,
-                  selectedSport: selectedSport,
-                  onTabChange: (String newTab) {
-                    setState(() {
-                      selectedTab = newTab;
-                      selectedSport = "All"; // Reset sport when category changes
-                    });
-                  },
-                  onSportChange: (String newSport) {
-                    setState(() {
-                      selectedSport = newSport;
-                    });
-                  },
-                ),
-
-                // Display Content Based on Selection
-                _buildContent(),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text("© League Pilot. All rights reserved."),
-                ),
-                SizedBox(height: 80),
-              ],
-            ),
+          // Tab Buttons (Live Now & Upcoming)
+          TabButtons(
+            selectedTab: selectedTab,
+            selectedSport: selectedSport,
+            onTabChange: (String newTab) {
+              setState(() {
+                selectedTab = newTab;
+                selectedSport = "All"; // Reset sport when category changes
+              });
+            },
+            onSportChange: (String newSport) {
+              setState(() {
+                selectedSport = newSport;
+              });
+            },
           ),
-          
+
+          // Display Content Based on Selection
+          _buildContent(),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            child: Text("© League Pilot. All rights reserved."),
+          ),
+          SizedBox(height: 80),
         ],
       ),
     );
@@ -112,8 +100,9 @@ class _MatchesState extends State<Matches> {
 
     // Filter matches based on selectedTab (Live Now / Upcoming) and selectedSport
     return matches.where((match) {
-      bool categoryMatch = (selectedTab == "Live Now" && match is LiveMatchInfo) ||
-          (selectedTab == "Upcoming" && match is UpcomingMatchInfo);
+      bool categoryMatch =
+          (selectedTab == "Live Now" && match is LiveMatchInfo) ||
+              (selectedTab == "Upcoming" && match is UpcomingMatchInfo);
       bool sportMatch = selectedSport == "All" || match.sport == selectedSport;
       return categoryMatch && sportMatch;
     }).toList();
@@ -131,14 +120,20 @@ class _MatchesState extends State<Matches> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5, spreadRadius: 2),
+          BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 5,
+              spreadRadius: 2),
         ],
       ),
       child: filteredMatches.isEmpty
           ? const Center(
               child: Text(
                 "No matches available",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.teal),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal),
               ),
             )
           : MatchContent(matches: filteredMatches),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/pages/gallery.dart';
 
 class DashboardGallery extends StatelessWidget {
   const DashboardGallery({super.key});
@@ -31,7 +32,6 @@ class DashboardGallery extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onPressed: () {},
                     child: Container(
                       alignment: Alignment.center,
                       child: Text(
@@ -44,6 +44,14 @@ class DashboardGallery extends StatelessWidget {
                         ),
                       ),
                     ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Gallery(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ] +
