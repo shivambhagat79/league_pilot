@@ -11,16 +11,8 @@ class Matches extends StatefulWidget {
 }
 
 class _MatchesState extends State<Matches> {
-  final ScrollController scrollController = ScrollController();
-
   String selectedTab = "Live Now"; // Default category
   String selectedSport = "All"; // Default sport selection (new "All" tab)
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
