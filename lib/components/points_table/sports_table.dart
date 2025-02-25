@@ -71,7 +71,7 @@ class _SportsTableState extends State<SportsTable> {
                 DataRow(
                   cells: [
                     DataCell(Text("1")),
-                    DataCell(Text("IIR Ropar")),
+                    DataCell(Text("IIT Ropar")),
                     DataCell(Text("100")),
                   ],
                 ),

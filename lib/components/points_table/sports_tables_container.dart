@@ -72,7 +72,7 @@ class _SportsTablesContainerState extends State<SportsTablesContainer> {
             child: Text("© League Pilot. All rights reserved.",
                 style: TextStyle(color: Colors.white.withAlpha(190))),
           ),
-          SizedBox(height: 80),
+          SizedBox(height: 500),
         ],
       ),
     );
