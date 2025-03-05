@@ -49,24 +49,32 @@ class _TeamCardState extends State<TeamCard> {
           ),
           color: Colors.teal[100],
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0), // Added proper padding
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min, // Ensures the Row doesn’t take extra space
               children: [
-                Hero(
-                  tag: "teamLogo_${widget.teamName}",
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      widget.logoUrl,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
+                SizedBox( // Restricting the image size to prevent overflow
+                  width: 50,
+                  height: 50,
+                  child: Hero(
+                    tag: "teamLogo_${widget.teamName}",
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        widget.logoUrl, // This should be a valid asset path
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                      ),
                     ),
+
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                Expanded( // Ensures text does not cause overflow
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -77,6 +85,7 @@ class _TeamCardState extends State<TeamCard> {
                           fontWeight: FontWeight.bold,
                           color: Colors.teal,
                         ),
+                        softWrap: true, // Ensures proper text wrapping
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -94,6 +103,8 @@ class _TeamCardState extends State<TeamCard> {
               ],
             ),
           ),
+
+
         ),
       ),
     );
