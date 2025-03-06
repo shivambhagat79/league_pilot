@@ -43,18 +43,24 @@ class _TeamCardState extends State<TeamCard> {
         scale: _isTapped ? 0.95 : 1.0,
         duration: const Duration(milliseconds: 150),
         child: Card(
-          elevation: 5,
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: _isTapped ? 3 : 1,
+            ),
           ),
-          color: Colors.teal[100],
+          color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(8.0), // Added proper padding
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, // Ensures the Row doesn’t take extra space
+              mainAxisSize:
+                  MainAxisSize.min, // Ensures the Row doesn’t take extra space
               children: [
-                SizedBox( // Restricting the image size to prevent overflow
+                SizedBox(
+                  // Restricting the image size to prevent overflow
                   width: 50,
                   height: 50,
                   child: Hero(
@@ -67,14 +73,15 @@ class _TeamCardState extends State<TeamCard> {
                         height: 50,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                            const Icon(Icons.image_not_supported,
+                                size: 50, color: Colors.grey),
                       ),
                     ),
-
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded( // Ensures text does not cause overflow
+                Expanded(
+                  // Ensures text does not cause overflow
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -103,8 +110,6 @@ class _TeamCardState extends State<TeamCard> {
               ],
             ),
           ),
-
-
         ),
       ),
     );
