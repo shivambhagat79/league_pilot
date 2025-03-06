@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hunger_games/components/logincr/Login_Main.dart';
 import 'package:hunger_games/pages/landing.dart';
 import 'firebase_options.dart';
-// import 'package:hunger_games/pages/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +23,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: const login(),
+      home: const LandingPage(),
       debugShowCheckedModeBanner: false,
     );
   }
