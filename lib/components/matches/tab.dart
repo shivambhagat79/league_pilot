@@ -33,97 +33,90 @@ class TabButtons extends StatelessWidget {
       children: [
         // Main Tab Buttons (Live Now / Upcoming / Results)
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           height: 70, // Reduced height
           width: double.maxFinite,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Ensures space between buttons
             children: [
               // Live Now Button
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        selectedTab == "Live Now" ? Colors.teal : Colors.teal[100],
-                    foregroundColor:
-                        selectedTab == "Live Now" ? Colors.white : Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedTab == "Live Now"
+                      ? Colors.teal
+                      : Colors.teal[100],
+                  foregroundColor: selectedTab == "Live Now"
+                      ? Colors.white
+                      : Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  onPressed: () {
-                    onTabChange("Live Now");
-                  },
-                  child: const SizedBox(
-                    height: 50, // Reduced height
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.fiber_manual_record, color: Colors.red, size: 22.0),
-                        Text("Live Now", style: TextStyle(fontSize: 14)),
-                        SizedBox(),
-                      ],
-                    ),
+                ),
+                onPressed: () {
+                  onTabChange("Live Now");
+                },
+                child: const SizedBox(
+                  height: 50, // Reduced height
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.fiber_manual_record, color: Colors.red, size: 22.0),
+                      Text("Live Now", style: TextStyle(fontSize: 10)),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: 10), // Space between buttons
-
               // Upcoming Button
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        selectedTab == "Upcoming" ? Colors.teal : Colors.teal[100],
-                    foregroundColor:
-                        selectedTab == "Upcoming" ? Colors.white : Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedTab == "Upcoming"
+                      ? Colors.teal
+                      : Colors.teal[100],
+                  foregroundColor: selectedTab == "Upcoming"
+                      ? Colors.white
+                      : Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  onPressed: () {
-                    onTabChange("Upcoming");
-                  },
-                  child: const SizedBox(
-                    height: 50, // Reduced height
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.schedule, color: Colors.blue, size: 22.0),
-                        Text("Upcoming", style: TextStyle(fontSize: 14)),
-                        SizedBox(),
-                      ],
-                    ),
+                ),
+                onPressed: () {
+                  onTabChange("Upcoming");
+                },
+                child: const SizedBox(
+                  height: 50, // Reduced height
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.schedule, color: Colors.blue, size: 22.0),
+                      Text("Upcoming", style: TextStyle(fontSize: 10)),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(width: 10), // Space between buttons
-
               // Results Button
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        selectedTab == "Results" ? Colors.teal : Colors.teal[100],
-                    foregroundColor:
-                        selectedTab == "Results" ? Colors.white : Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedTab == "Results"
+                      ? Colors.teal
+                      : Colors.teal[100],
+                  foregroundColor: selectedTab == "Results"
+                      ? Colors.white
+                      : Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  onPressed: () {
-                    onTabChange("Results");
-                  },
-                  child: const SizedBox(
-                    height: 50, // Reduced height
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(Icons.emoji_events, color: Colors.orange, size: 22.0),
-                        Text("Results", style: TextStyle(fontSize: 14)),
-                        SizedBox(),
-                      ],
-                    ),
+                ),
+                onPressed: () {
+                  onTabChange("Results");
+                },
+                child: const SizedBox(
+                  height: 50, // Reduced height
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.emoji_events, color: Colors.orange, size: 22.0),
+                      Text("Results", style: TextStyle(fontSize: 10)),
+                    ],
                   ),
                 ),
               ),
@@ -164,7 +157,10 @@ class TabButtons extends StatelessWidget {
                     onPressed: () {
                       onSportChange(sport);
                     },
-                    child: Text(sport),
+                    child: Text(
+                      sport,
+                      style: TextStyle(fontSize: 12), // Adjust font size for better fit
+                    ),
                   ),
                 );
               }).toList(),
