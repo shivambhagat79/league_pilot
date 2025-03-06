@@ -106,7 +106,7 @@ class ActionButton extends StatelessWidget {
             children: [
               icon,
               Text(
-                " " + text,
+                " $text",
                 style: TextStyle(
                   fontSize: 14,
                   // fontFamily: "Overcame",

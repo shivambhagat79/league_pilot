@@ -19,12 +19,11 @@ class TabButtons extends StatelessWidget {
     "Football",
     "Cricket",
     "Basketball",
-    "Tennis",
+    "Lawn Tennis",
     "Badminton",
     "Volleyball",
     "Hockey",
-    "Table Tennis",
-    "Athletics"
+    "Chess"
   ]; // List of sports including "All"
 
   @override
@@ -33,89 +32,125 @@ class TabButtons extends StatelessWidget {
       children: [
         // Main Tab Buttons (Live Now / Upcoming / Results)
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          height: 70, // Reduced height
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+// Reduced height
           width: double.maxFinite,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Ensures space between buttons
+            mainAxisAlignment:
+                MainAxisAlignment.spaceEvenly, // Ensures space between buttons
             children: [
               // Live Now Button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedTab == "Live Now"
-                      ? Colors.teal
-                      : Colors.teal[100],
-                  foregroundColor: selectedTab == "Live Now"
-                      ? Colors.white
-                      : Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: selectedTab == "Live Now"
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.teal.shade900.withAlpha(40),
+                    foregroundColor: selectedTab == "Live Now"
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Colors.black.withAlpha(180),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(0),
                   ),
-                ),
-                onPressed: () {
-                  onTabChange("Live Now");
-                },
-                child: const SizedBox(
-                  height: 50, // Reduced height
+                  onPressed: () {
+                    onTabChange("Live Now");
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.fiber_manual_record, color: Colors.red, size: 22.0),
-                      Text("Live Now", style: TextStyle(fontSize: 10)),
+                      Icon(
+                        Icons.live_tv,
+                        color: selectedTab == "Live Now"
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Colors.black.withAlpha(180),
+                        size: 18,
+                      ),
+                      Text(
+                        "  Live Now",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
+              SizedBox(width: 10),
               // Upcoming Button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedTab == "Upcoming"
-                      ? Colors.teal
-                      : Colors.teal[100],
-                  foregroundColor: selectedTab == "Upcoming"
-                      ? Colors.white
-                      : Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: selectedTab == "Upcoming"
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.teal.shade900.withAlpha(40),
+                    foregroundColor: selectedTab == "Upcoming"
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Colors.black.withAlpha(180),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(0),
                   ),
-                ),
-                onPressed: () {
-                  onTabChange("Upcoming");
-                },
-                child: const SizedBox(
-                  height: 50, // Reduced height
+                  onPressed: () {
+                    onTabChange("Upcoming");
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.schedule, color: Colors.blue, size: 22.0),
-                      Text("Upcoming", style: TextStyle(fontSize: 10)),
+                      Icon(
+                        Icons.schedule,
+                        color: selectedTab == "Upcoming"
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Colors.black.withAlpha(180),
+                        size: 18,
+                      ),
+                      Text(
+                        "  Upcoming",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
+              SizedBox(width: 10),
               // Results Button
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedTab == "Results"
-                      ? Colors.teal
-                      : Colors.teal[100],
-                  foregroundColor: selectedTab == "Results"
-                      ? Colors.white
-                      : Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: selectedTab == "Results"
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.teal.shade900.withAlpha(40),
+                    foregroundColor: selectedTab == "Results"
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Colors.black.withAlpha(180),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.all(0),
                   ),
-                ),
-                onPressed: () {
-                  onTabChange("Results");
-                },
-                child: const SizedBox(
-                  height: 50, // Reduced height
+                  onPressed: () {
+                    onTabChange("Results");
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.emoji_events, color: Colors.orange, size: 22.0),
-                      Text("Results", style: TextStyle(fontSize: 10)),
+                      Icon(
+                        Icons.emoji_events,
+                        color: selectedTab == "Results"
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Colors.black.withAlpha(180),
+                        size: 18,
+                      ),
+                      Text(
+                        "  Results",
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -126,40 +161,31 @@ class TabButtons extends StatelessWidget {
 
         // Horizontal Rule (Divider)
         const Divider(
-          thickness: 1.5,
+          thickness: 1.0,
           color: Colors.grey, // Light grey divider
-          indent: 20,
-          endIndent: 20,
+          indent: 10,
+          endIndent: 10,
         ),
 
         // Horizontally Scrollable Sports Tab Buttons
         Container(
-          height: 60, // Reduced height (50% of the main tab buttons)
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          margin: EdgeInsets.only(bottom: 10),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: sports.map((sport) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedSport == sport
-                          ? Colors.teal
-                          : Colors.teal[100],
-                      foregroundColor: selectedSport == sport
-                          ? Colors.white
-                          : Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
+                  padding: const EdgeInsets.only(left: 10),
+                  child: FilterChip(
+                    selected: selectedSport == sport,
+                    onSelected: (value) {
                       onSportChange(sport);
                     },
-                    child: Text(
+                    label: Text(
                       sport,
-                      style: TextStyle(fontSize: 12), // Adjust font size for better fit
+                      style: TextStyle(
+                        fontSize: 12,
+                      ), // Adjust font size for better fit
                     ),
                   ),
                 );
