@@ -30,6 +30,7 @@ class _CustomscrollpageState extends State<Customscrollpage> {
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.teal.shade900.withAlpha(190),
+            foregroundColor: Colors.white,
             centerTitle: true,
             // pinned: true,
             title: Text(
