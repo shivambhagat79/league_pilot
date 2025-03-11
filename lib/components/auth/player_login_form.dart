@@ -15,7 +15,7 @@ class _PlayerLoginFormState extends State<PlayerLoginForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text;
       String password = _passwordController.text;
@@ -96,9 +96,7 @@ class _PlayerLoginFormState extends State<PlayerLoginForm> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: () {
-              _handleLogin();
-            },
+            onPressed: _handleLogin,
             child: Container(
               height: 56,
               alignment: Alignment.center,
