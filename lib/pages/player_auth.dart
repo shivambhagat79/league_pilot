@@ -23,6 +23,7 @@ class _PlayerAuthPageState extends State<PlayerAuthPage> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Container(
             padding: EdgeInsets.all(30),
             width: double.maxFinite,
