@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/pages/auth/admin_auth.dart';
+import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/pages/tournament/home.dart';
 import 'package:hunger_games/pages/auth/player_auth.dart';
+import 'package:hunger_games/services/shared_preferences.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -60,11 +62,14 @@ class LandingPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () {
+              onPressed: () async {
+                bool isPlayerLoggedIn = await getPlayerLoginState();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PlayerAuthPage(),
+                    builder: (context) =>
+                        isPlayerLoggedIn ? PlayerPage() : PlayerAuthPage(),
                   ),
                 );
               },

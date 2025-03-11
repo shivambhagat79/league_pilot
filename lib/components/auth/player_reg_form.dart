@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/services/auth.dart';
+import 'package:hunger_games/services/shared_preferences.dart';
 
 class PlayerRegForm extends StatefulWidget {
   final Function toggleAuth;
@@ -43,7 +44,7 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
       String email = _emailController.text;
       String password = _passwordController.text;
 
-      String? userId = await _authService.registerPlayer(
+      List<String?> result = await _authService.registerPlayer(
         name: name,
         email: email,
         password: password,
@@ -52,12 +53,16 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
         tournament: _selectedTournament!,
       );
 
+      String? userId = result[0];
+
       setState(() {
         _isLoading = false;
       });
 
       if (userId != null) {
-        // If registration is successful, show a success message.
+        await savePlayerLoginState(true);
+        await savePlayerId(result[0]!);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -78,9 +83,9 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
         // If registration fails, show an error message.
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Registration failed. Please try again.',
+              result[1] ?? 'Registration failed',
               textAlign: TextAlign.center,
             ),
           ),
