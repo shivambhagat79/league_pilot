@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hunger_games/pages/player.dart';
+import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/services/auth.dart';
 
 class PlayerRegForm extends StatefulWidget {

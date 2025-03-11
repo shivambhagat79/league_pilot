@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hunger_games/pages/admin.dart';
+import 'package:hunger_games/pages/admin/admin.dart';
 
 class AdminAuthPage extends StatefulWidget {
   const AdminAuthPage({super.key});
