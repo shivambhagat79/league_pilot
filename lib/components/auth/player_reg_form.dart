@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hunger_games/pages/player.dart';
+import 'package:hunger_games/pages/player/player.dart';
 
 class PlayerRegForm extends StatefulWidget {
   final Function toggleAuth;
