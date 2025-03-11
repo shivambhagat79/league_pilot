@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hunger_games/pages/admin_auth.dart';
-import 'package:hunger_games/pages/home.dart';
-import 'package:hunger_games/pages/player_auth.dart';
+import 'package:hunger_games/pages/auth/admin_auth.dart';
+import 'package:hunger_games/pages/tournament/home.dart';
+import 'package:hunger_games/pages/auth/player_auth.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
