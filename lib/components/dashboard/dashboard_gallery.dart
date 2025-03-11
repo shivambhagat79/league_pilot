@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hunger_games/pages/gallery.dart';
+import 'package:hunger_games/pages/tournament/gallery.dart';
 
 class DashboardGallery extends StatelessWidget {
   const DashboardGallery({super.key});
