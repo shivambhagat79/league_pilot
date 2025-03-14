@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/pages/admin/admin.dart';
 import 'package:hunger_games/pages/auth/admin_auth.dart';
 import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/pages/auth/player_auth.dart';
@@ -85,11 +86,14 @@ class LandingPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () {
+              onPressed: () async {
+                bool isAdminLoggedIn = await getAdminLoginState();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AdminAuthPage(),
+                    builder: (context) =>
+                        isAdminLoggedIn ? AdminPage() : AdminAuthPage(),
                   ),
                 );
               },
