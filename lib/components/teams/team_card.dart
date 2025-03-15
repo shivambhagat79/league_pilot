@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/components/teams/team_details.dart';
 
 class TeamCard extends StatefulWidget {
   final String teamName;
@@ -8,7 +9,7 @@ class TeamCard extends StatefulWidget {
   const TeamCard({
     super.key,
     required this.teamName,
-    required this.logoUrl,
+    this.logoUrl = "assets/images/components/Sample_Team_Icon.jpg",
     required this.description,
   });
 
@@ -17,99 +18,52 @@ class TeamCard extends StatefulWidget {
 }
 
 class _TeamCardState extends State<TeamCard> {
-  bool _isTapped = false;
+
+  void _navigateToTeamDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TeamDetails(
+            teamName: widget.teamName,
+            logoUrl: widget.logoUrl, // Pass team logo
+            description: widget.description, // Pass team description
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {
-        setState(() {
-          _isTapped = true;
-        });
-      },
-      onTapUp: (_) {
-        Future.delayed(const Duration(milliseconds: 150), () {
-          setState(() {
-            _isTapped = false;
-          });
-        });
-      },
-      onTapCancel: () {
-        setState(() {
-          _isTapped = false;
-        });
-      },
-      child: AnimatedScale(
-        scale: _isTapped ? 0.95 : 1.0,
-        duration: const Duration(milliseconds: 150),
-        child: Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-            side: BorderSide(
-              color: Theme.of(context).colorScheme.primary,
-              width: _isTapped ? 3 : 1,
-            ),
-          ),
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0), // Added proper padding
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize:
-                  MainAxisSize.min, // Ensures the Row doesn’t take extra space
-              children: [
-                SizedBox(
-                  // Restricting the image size to prevent overflow
+    return Center(
+      child: Card(
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Colors.teal, width: 2), // Border color & thickness
+          borderRadius: BorderRadius.circular(12), // Optional: Rounded corners
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Image.asset(
+                  widget.logoUrl,
                   width: 50,
                   height: 50,
-                  child: Hero(
-                    tag: "teamLogo_${widget.teamName}",
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        widget.logoUrl, // This should be a valid asset path
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.image_not_supported,
-                                size: 50, color: Colors.grey),
-                      ),
-                    ),
-                  ),
+                  fit: BoxFit.cover,
+              ),
+              title: Text(widget.teamName),
+              subtitle: Text(widget.description),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                TextButton(
+                  child: const Text('SEE BIO'),
+                  onPressed: _navigateToTeamDetails,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  // Ensures text does not cause overflow
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.teamName,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal,
-                        ),
-                        softWrap: true, // Ensures proper text wrapping
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.teal[900],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
+                const SizedBox(width: 8),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
