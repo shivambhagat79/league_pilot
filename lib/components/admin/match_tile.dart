@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/components/admin/score_update_dialog.dart';
+import 'package:hunger_games/pages/admin/edit_match.dart';
 
 class MatchTile extends StatefulWidget {
   final Map<String, String>? match;
@@ -7,6 +9,8 @@ class MatchTile extends StatefulWidget {
   @override
   State<MatchTile> createState() => _MatchTileState();
 }
+
+enum MenuOptions { edit, start, end, delete }
 
 class _MatchTileState extends State<MatchTile> {
   @override
@@ -38,12 +42,146 @@ class _MatchTileState extends State<MatchTile> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => ScoreUpdateDialog(match: widget.match),
+                ),
                 icon: Icon(Icons.scoreboard_outlined),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.more_vert),
+              PopupMenuButton<MenuOptions>(
+                icon: Icon(Icons.more_vert), // Three dot menu icon
+                onSelected: (MenuOptions option) {
+                  // Handle menu selection
+                  switch (option) {
+                    case MenuOptions.edit:
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EditMatchPage(),
+                        ),
+                      );
+                      break;
+                    case MenuOptions.start:
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Start Match'),
+                              content: Text(
+                                  'Are you sure you want to start the match?'),
+                              actions: [
+                                FilledButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Yes'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('No'),
+                                ),
+                              ],
+                            );
+                          });
+                      break;
+                    case MenuOptions.delete:
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Delete Match'),
+                              content: Text(
+                                  'Are you sure you want to start the match?\nThis action cannot be undone.'),
+                              actions: [
+                                FilledButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Yes'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('No'),
+                                ),
+                              ],
+                            );
+                          });
+                      break;
+                    case MenuOptions.end:
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('End Match'),
+                              content: Text(
+                                  'Are you sure you want to start the match?\nThe scores will be locked and cannot be updated after this action.'),
+                              actions: [
+                                FilledButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Yes'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('No'),
+                                ),
+                              ],
+                            );
+                          });
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<MenuOptions>>[
+                  PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.edit,
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit),
+                        SizedBox(width: 8),
+                        Text('Edit'),
+                      ],
+                    ),
+                  ),
+                  if (widget.match!["status"] == "Upcoming")
+                    PopupMenuItem<MenuOptions>(
+                      value: MenuOptions.start,
+                      child: Row(
+                        children: [
+                          Icon(Icons.play_arrow),
+                          SizedBox(width: 8),
+                          Text('Start'),
+                        ],
+                      ),
+                    ),
+                  if (widget.match!["status"] == "Live Now")
+                    PopupMenuItem<MenuOptions>(
+                      value: MenuOptions.end,
+                      child: Row(
+                        children: [
+                          Icon(Icons.stop),
+                          SizedBox(width: 8),
+                          Text('End Match'),
+                        ],
+                      ),
+                    ),
+                  PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.delete,
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete),
+                        SizedBox(width: 8),
+                        Text('Delete'),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

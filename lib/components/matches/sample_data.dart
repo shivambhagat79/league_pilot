@@ -5,8 +5,8 @@ List<Map<String, String>> matchData = [
     "sport": "Chess",
     "team_1_name": "IIT Patna",
     "team_2_name": "IIT Kanpur",
-    "team_1_score": "1.5",
-    "team_2_score": "0.5",
+    "team_1_score": "4",
+    "team_2_score": "3",
     "date": "01/03/2025",
     "start_time": "09:00",
     "venue": "Chess Club"

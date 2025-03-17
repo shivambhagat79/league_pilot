@@ -32,28 +32,29 @@ class _AdminPageState extends State<AdminPage> {
         IconButton(
           icon: Icon(Icons.logout),
           onPressed: () => showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    title: Text('Logout?'),
-                    content: Text('Are you sure you want to logout?'),
-                    actions: [
-                      FilledButton(
-                        onPressed: () async {
-                          await saveAdminLoginState(false);
-                          await saveAdminId('');
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Yes'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('No'),
-                      ),
-                    ],
-                  )),
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Logout?'),
+              content: Text('Are you sure you want to logout?'),
+              actions: [
+                FilledButton(
+                  onPressed: () async {
+                    await saveAdminLoginState(false);
+                    await saveAdminId('');
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Yes'),
+                ),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('No'),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
       floatingActionButton: FloatingActionButton.extended(
