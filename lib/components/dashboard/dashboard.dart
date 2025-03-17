@@ -35,7 +35,7 @@ class _DashboardState extends State<Dashboard> {
         child: Column(
           children: [
             DashboardActivities(),
-            DashboardActions(),
+            // DashboardActions(),
             DashboardGallery(),
             SizedBox(height: 10),
             DashboardMap(),
