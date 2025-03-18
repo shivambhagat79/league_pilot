@@ -43,7 +43,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _startdate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
     return pickedDate;
