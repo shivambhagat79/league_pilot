@@ -7,8 +7,8 @@ class TournamentService {
   Future<String?> createTournament({
     required String name,
     required String hostInstitute,
-    required String startDateString,
-    required String endDateString,
+    required DateTime startDate,
+    required DateTime endDate,
     required List<String> admins,
     required List<String> sports,
     required List<String> contingents,
@@ -22,10 +22,6 @@ class TournamentService {
     required String organiser,
   }) async {
     try {
-      // 1. Convert date strings to DateTime
-      DateTime startDate = DateTime.tryParse(startDateString) ?? DateTime.now();
-      DateTime endDate = DateTime.tryParse(endDateString) ?? DateTime.now();
-
       // 2. Convert medal points strings to integers
       int goldMedalPoints = int.tryParse(goldMedalPointsString) ?? 0;
       int silverMedalPoints = int.tryParse(silverMedalPointsString) ?? 0;
@@ -92,7 +88,7 @@ class TournamentService {
       }).toList();
 
       return activeTournaments;
-  // the function will return list of maps access it using keys    tournamentId, tournamentName, hostInstitute
+      // the function will return list of maps access it using keys    tournamentId, tournamentName, hostInstitute
     } catch (e) {
       print("Error retrieving active tournaments: $e");
       return [];

@@ -1,7 +1,7 @@
 import '../models/tournament.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TournamentService {
+class TournamentServiceDashboard {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future<List<String>> getRecentMatchIdsFromTournament(
       String tournamentId) async {

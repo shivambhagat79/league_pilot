@@ -5,7 +5,9 @@ import 'package:hunger_games/pages/admin/create_match.dart';
 
 class AdminTourrnamentPage extends StatefulWidget {
   final String title;
-  const AdminTourrnamentPage({super.key, required this.title});
+  final String tournamentId;
+  const AdminTourrnamentPage(
+      {super.key, required this.title, required this.tournamentId});
 
   @override
   State<AdminTourrnamentPage> createState() => _AdminTourrnamentPageState();
@@ -13,11 +15,17 @@ class AdminTourrnamentPage extends StatefulWidget {
 
 class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
   int _selectedIndex = 0;
-  final List<Widget> _pages = [
-    MatchData(),
-    Container(),
-    Container(),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      MatchData(tournamentId: widget.tournamentId),
+      Container(),
+      Container(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

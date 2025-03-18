@@ -3,7 +3,8 @@ import 'package:hunger_games/components/admin/match_tile.dart';
 import 'package:hunger_games/components/matches/sample_data.dart';
 
 class MatchData extends StatefulWidget {
-  const MatchData({super.key});
+  final String tournamentId;
+  const MatchData({super.key, required this.tournamentId});
 
   @override
   State<MatchData> createState() => _MatchDataState();

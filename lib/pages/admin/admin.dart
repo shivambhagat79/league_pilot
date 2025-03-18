@@ -3,6 +3,7 @@ import 'package:hunger_games/components/common/custom_scroll_page.dart';
 import 'package:hunger_games/pages/admin/admin_tournament.dart';
 import 'package:hunger_games/pages/admin/create_tournament.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
+import 'package:hunger_games/services/tournament_service.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -12,17 +13,22 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  // Example list of tournaments
-  final List<Map<String, String>> tournaments = [
-    {
-      'name': "Aarohan'25",
-      'hostInstitute': 'IIT Ropar',
-    },
-    {
-      'name': "Inter IIT'25",
-      'hostInstitute': 'IIT Kanpur',
-    },
-  ];
+  TournamentService tournamentService = TournamentService();
+  late List<Map<String, String>> tournaments;
+  bool _isLoading = true;
+
+  Future<void> getActiveTournaments() async {
+    tournaments = await tournamentService.getActiveTournaments();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getActiveTournaments();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,54 +76,58 @@ class _AdminPageState extends State<AdminPage> {
         label: Text('Create Tournament'),
         icon: Icon(Icons.add),
       ),
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 20),
-            child: Text(
-              'Your Tournaments',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 26,
-                color: Colors.black54,
-                // fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Column(
-            children: tournaments
-                .map(
-                  (tournament) => Column(
-                    children: [
-                      Divider(
-                        height: 0,
-                        thickness: 1,
-                      ),
-                      ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 30),
-                        title: Text(tournament['name']!),
-                        subtitle: Text(tournament['hostInstitute']!),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => AdminTourrnamentPage(
-                                title: tournament['name']!,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+      child: _isLoading
+          ? LinearProgressIndicator()
+          : Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    'Your Tournaments',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 26,
+                      color: Colors.black54,
+                      // fontWeight: FontWeight.bold,
+                    ),
                   ),
-                )
-                .toList(),
-          ),
-          Divider(
-            height: 0,
-            thickness: 1,
-          ),
-        ],
-      ),
+                ),
+                Column(
+                  children: tournaments
+                      .map(
+                        (tournament) => Column(
+                          children: [
+                            Divider(
+                              height: 0,
+                              thickness: 1,
+                            ),
+                            ListTile(
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 30),
+                              title: Text(tournament['tournamentName']!),
+                              subtitle: Text(tournament['hostInstitute']!),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => AdminTourrnamentPage(
+                                      title: tournament['tournamentName']!,
+                                      tournamentId: tournament['tournamentId']!,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                      .toList(),
+                ),
+                Divider(
+                  height: 0,
+                  thickness: 1,
+                ),
+              ],
+            ),
     );
   }
 }
