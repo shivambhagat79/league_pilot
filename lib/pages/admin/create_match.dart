@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
 
 class CreateMatchPage extends StatefulWidget {
@@ -34,6 +35,10 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
   TimeOfDay? _endTime;
   String? _selectedContingent1;
   String? _selectedContingent2;
+  final _venueController = TextEditingController();
+  final _winController = TextEditingController();
+  final _lossController = TextEditingController();
+  final _drawController = TextEditingController();
 
   Future<void> setDate() async {
     final DateTime? date = await showDatePicker(
@@ -146,6 +151,18 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                 validator: (value) =>
                     value == null ? 'Please select a gender' : null,
               ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _venueController,
+                decoration: InputDecoration(
+                  labelText: 'Venue',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+                validator: (value) =>
+                    value == null ? 'Please select a gender' : null,
+              ),
               Divider(height: 40, thickness: 1),
               Container(
                 alignment: Alignment.centerLeft,
@@ -208,6 +225,77 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                       },
                       validator: (value) =>
                           value == null ? 'Please select a Contingent' : null,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(height: 40, thickness: 1),
+              Container(
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(bottom: 20),
+                child: Text(
+                  'Set Points Distribution',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _winController,
+                      textAlign: TextAlign.center,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Win',
+                        hintText: '2',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter points'
+                          : null,
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _lossController,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Loss',
+                        hintText: '0',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter points'
+                          : null,
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _drawController,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Draw',
+                        hintText: '1',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter points'
+                          : null,
                     ),
                   ),
                 ],
