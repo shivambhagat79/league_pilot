@@ -2,13 +2,13 @@ import 'schedule.dart';
 import 'scoreboard.dart';
 
 class Match {
+  // Unique match identifier (typically the Firestore document ID)
   final String
-      id; // Unique match identifier (typically the Firestore document ID)
-  final String
-      tournamentId; // Reference to the tournament this match is part of
+      tournament; // name of  tournament this match is part of
   final String sport; // The sport being played (could be an ID or name)
+  final String gender;
   final Scoreboard scoreboard; // Dynamic scoreboard for the match
-  final List<String> teams; // List of participating team IDs
+  final List<String> teams; // List of participating team names
   final Schedule schedule; // The match schedule details
   final String
       status; // For backend use, e.g., "upcoming", "running", "previous"
@@ -16,9 +16,9 @@ class Match {
       verdict; // Outcome of the match (e.g., winning team ID, tie, etc.)
 
   Match({
-    required this.id,
-    required this.tournamentId,
+    required this.tournament,
     required this.sport,
+    required this.gender,
     required this.scoreboard,
     required this.teams,
     required this.schedule,
@@ -29,9 +29,9 @@ class Match {
   // Factory constructor to create a Match instance from a map (e.g., from Firestore)
   factory Match.fromMap(String id, Map<String, dynamic> map) {
     return Match(
-      id: id,
-      tournamentId: map['tournamentId'] ?? '',
+      tournament: map['tournament'] ?? '',
       sport: map['sport'] ?? '',
+      gender: map['gender'] ?? '',
       scoreboard: map.containsKey('scoreboard')
           ? Scoreboard.fromMap(Map<String, dynamic>.from(map['scoreboard']))
           : Scoreboard(teamScores: {}),
@@ -45,8 +45,9 @@ class Match {
   // Converts a Match instance into a map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
-      'tournamentId': tournamentId,
+      'tournament': tournament,
       'sport': sport,
+      'gender': gender,
       'scoreboard': scoreboard.toMap(),
       'teams': teams,
       'schedule': schedule.toMap(),
