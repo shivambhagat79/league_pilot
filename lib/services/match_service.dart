@@ -132,4 +132,43 @@ class MatchService {
       }).toList();
     });
   }
+//returns a bool if the score was updated or not
+  Future<bool> updateMatchScore({
+    required String matchId,
+    required int scoreTeam1,
+    required int scoreTeam2,
+  }) async {
+    try {
+      // 1. Get the match document
+      final docRef = _firestore.collection('matches').doc(matchId);
+      final snapshot = await docRef.get();
+
+      // 2. Check if the match document exists
+      if (!snapshot.exists) {
+        print('Match not found for ID: $matchId');
+        return false;
+      }
+
+      // 3. Extract the teams array
+      final data = snapshot.data() as Map<String, dynamic>;
+      final List<String> teams = List<String>.from(data['teams'] ?? []);
+
+      // 4. Ensure we have at least two teams
+      if (teams.length < 2) {
+        print('Not enough teams to update scores in match: $matchId');
+        return false;
+      }
+
+      // 5. Update the scores for teams[0] and teams[1] in the scoreboard
+      await docRef.update({
+        'scoreboard.teamScores.${teams[0]}': scoreTeam1,
+        'scoreboard.teamScores.${teams[1]}': scoreTeam2,
+      });
+
+      return true;
+    } catch (e) {
+      print('Error updating match scores: $e');
+      return false;
+    }
+  }
 }
