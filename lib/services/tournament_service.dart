@@ -92,18 +92,17 @@ class TournamentService {
       }).toList();
 
       return activeTournaments;
-  // the function will return list of maps access it using keys    tournamentId, tournamentName, hostInstitute
+      // the function will return list of maps access it using keys    tournamentId, tournamentName, hostInstitute
     } catch (e) {
       print("Error retrieving active tournaments: $e");
       return [];
     }
   }
+
   Future<List<String>> getContingents(String tournamentId) async {
     try {
-      DocumentSnapshot snapshot = await _firestore
-          .collection('tournaments')
-          .doc(tournamentId)
-          .get();
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
 
       if (!snapshot.exists) {
         // If the document doesn't exist, return an empty list.
@@ -125,10 +124,8 @@ class TournamentService {
   /// Returns a list of sports for the given tournament ID.
   Future<List<String>> getSports(String tournamentId) async {
     try {
-      DocumentSnapshot snapshot = await _firestore
-          .collection('tournaments')
-          .doc(tournamentId)
-          .get();
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
 
       if (!snapshot.exists) {
         // If the document doesn't exist, return an empty list.
@@ -146,5 +143,30 @@ class TournamentService {
       return [];
     }
   }
-}
 
+  Future<List<Map<String, dynamic>>> getTournamentsByAdminEmail(
+      String adminEmail) async {
+    try {
+      // Query tournaments where the 'admins' array contains [adminEmail]
+      QuerySnapshot snapshot = await _firestore
+          .collection('tournaments')
+          .where('admins', arrayContains: adminEmail)
+          .get();
+
+      // Convert each document into a map with relevant fields
+      List<Map<String, dynamic>> tournaments = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return {
+          'tournamentId': doc.id,
+          'tournamentName': data['name'] ?? '',
+          'hostInstitute': data['hostInstitute'] ?? '',
+        };
+      }).toList();
+
+      return tournaments;
+    } catch (e) {
+      print("Error retrieving tournaments for admin $adminEmail: $e");
+      return [];
+    }
+  }
+}
