@@ -17,6 +17,7 @@ class Match {
       status; // For backend use, e.g., "upcoming", "running", "previous"
   final String
       verdict; // Outcome of the match (e.g., winning team ID, tie, etc.)
+  final int statusPriority ;    
 
   Match({
     required this.tournament,
@@ -30,6 +31,7 @@ class Match {
     required this.schedule,
     required this.status,
     required this.verdict,
+    required this.statusPriority,
   });
 
   // Factory constructor to create a Match instance from a map (e.g., from Firestore)
@@ -48,6 +50,7 @@ class Match {
       schedule: Schedule.fromMap(Map<String, dynamic>.from(map['schedule'])),
       status: map['status'] ?? '',
       verdict: map['verdict'] ?? '',
+      statusPriority: map['statusPriority'] ?? 0,
     );
   }
 
@@ -65,6 +68,7 @@ class Match {
       'schedule': schedule.toMap(),
       'status': status,
       'verdict': verdict,
+      'statusPriority': statusPriority,
     };
   }
 }
