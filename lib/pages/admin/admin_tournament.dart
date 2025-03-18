@@ -58,7 +58,9 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CreateMatchPage(),
+                    builder: (context) => CreateMatchPage(
+                      tournamentId: widget.tournamentId,
+                    ),
                   ),
                 );
               },
@@ -70,11 +72,11 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
           : _selectedIndex == 1
               ? FloatingActionButton.extended(
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CreateMatchPage(),
-                      ),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => CreateMatchPage(),
+                    //   ),
+                    // );
                   },
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Theme.of(context).colorScheme.onSecondary,

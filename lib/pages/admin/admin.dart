@@ -14,11 +14,13 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   TournamentService tournamentService = TournamentService();
-  late List<Map<String, String>> tournaments;
+  late List<Map<String, dynamic>> tournaments;
   bool _isLoading = true;
 
   Future<void> getActiveTournaments() async {
-    tournaments = await tournamentService.getActiveTournaments();
+    String? adminEmail = await getAdminEmail();
+    tournaments =
+        await tournamentService.getTournamentsByAdminEmail(adminEmail!);
     setState(() {
       _isLoading = false;
     });

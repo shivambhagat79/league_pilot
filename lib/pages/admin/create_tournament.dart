@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
 import 'package:hunger_games/pages/admin/admin_tournament.dart';
-import 'package:hunger_games/pages/tournament/tournaments.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 
 class CreateTournamentPage extends StatefulWidget {
@@ -92,7 +91,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
         startDate: _startdate ?? DateTime.now(),
         endDate: _endDate ?? DateTime.now(),
         admins: _admins,
-        sports: _sports,
+        sports: _selectedSports,
         contingents: _contingents,
         goldMedalPointsString: _goldMedalController.text,
         silverMedalPointsString: _silverMedalController.text,
@@ -124,6 +123,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
             content: Text("Failed to create tournament"),
           ),
         );
+        Navigator.of(context).pop();
       }
 
       setState(() {
