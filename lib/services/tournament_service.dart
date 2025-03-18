@@ -94,4 +94,75 @@ class TournamentService {
       return [];
     }
   }
+
+  Future<List<String>> getContingents(String tournamentId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        // If the document doesn't exist, return an empty list.
+        return [];
+      }
+
+      // Cast the snapshot data to a Map
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // Extract the contingents field (ensure it's a List<String>)
+      List<String> contingents = List<String>.from(data['contingents'] ?? []);
+      return contingents;
+    } catch (e) {
+      print("Error getting contingents: $e");
+      return [];
+    }
+  }
+
+  /// Returns a list of sports for the given tournament ID.
+  Future<List<String>> getSports(String tournamentId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        // If the document doesn't exist, return an empty list.
+        return [];
+      }
+
+      // Cast the snapshot data to a Map
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // Extract the sports field (ensure it's a List<String>)
+      List<String> sports = List<String>.from(data['sports'] ?? []);
+      return sports;
+    } catch (e) {
+      print("Error getting sports: $e");
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getTournamentsByAdminEmail(
+      String adminEmail) async {
+    try {
+      // Query tournaments where the 'admins' array contains [adminEmail]
+      QuerySnapshot snapshot = await _firestore
+          .collection('tournaments')
+          .where('admins', arrayContains: adminEmail)
+          .get();
+
+      // Convert each document into a map with relevant fields
+      List<Map<String, dynamic>> tournaments = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return {
+          'tournamentId': doc.id,
+          'tournamentName': data['name'] ?? '',
+          'hostInstitute': data['hostInstitute'] ?? '',
+        };
+      }).toList();
+
+      return tournaments;
+    } catch (e) {
+      print("Error retrieving tournaments for admin $adminEmail: $e");
+      return [];
+    }
+  }
 }

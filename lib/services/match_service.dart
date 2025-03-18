@@ -23,6 +23,9 @@ class MatchService {
     required String sport,
     required String tournament,
     required String gender,
+    required String winPoints1,
+    required String losePoints1,
+    required String drawPoints1,
     required String venue,
     required String team1,
     required String team2,
@@ -46,6 +49,9 @@ class MatchService {
           team2: 0,
         },
       );
+      int winPoints = int.tryParse(winPoints1) ?? 0;
+      int losePoints = int.tryParse(losePoints1) ?? 0;
+      int drawPoints = int.tryParse(drawPoints1) ?? 0;
 
       // Default status and verdict
       String status = 'upcoming';
@@ -59,6 +65,9 @@ class MatchService {
         tournament: tournament,
         sport: sport,
         gender: gender,
+        winpoints: winPoints,
+        losepoints: losePoints,
+        drawpoints: drawPoints,
         scoreboard: scoreboard,
         teams: teams,
         schedule: schedule,
@@ -77,6 +86,31 @@ class MatchService {
     } catch (e) {
       print('Error creating match: $e');
       return null;
+    }
+  }
+  // these functions return bool telling the user if status was updated or not
+   Future<bool> startMatch(String matchId) async {
+    try {
+      await _firestore.collection('matches').doc(matchId).update({
+        'status': 'live',
+      });
+      return true; // Indicate success
+    } catch (e) {
+      print('Error starting match: $e');
+      return false; // Indicate failure
+    }
+  }
+
+  /// Set the match status to "end" (or "ended").
+  Future<bool> endMatch(String matchId) async {
+    try {
+      await _firestore.collection('matches').doc(matchId).update({
+        'status': 'end',
+      });
+      return true; // Indicate success
+    } catch (e) {
+      print('Error ending match: $e');
+      return false; // Indicate failure
     }
   }
 }
