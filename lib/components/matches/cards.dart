@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hunger_games/utils/sport_to_icon.dart';
 
@@ -10,6 +12,18 @@ class LiveNowCard extends StatefulWidget {
 }
 
 class _LiveNowCardState extends State<LiveNowCard> {
+  bool _isVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _isVisible = !_isVisible;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -109,16 +123,20 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "Live Now",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
+                AnimatedOpacity(
+                  opacity: _isVisible ? 1.0 : 0.0,
+                  duration: Duration(seconds: 1),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade800,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "Live Now",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
                   ),
                 ),
               ],
