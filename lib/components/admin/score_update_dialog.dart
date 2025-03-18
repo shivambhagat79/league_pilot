@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hunger_games/services/match_service.dart';
 
 class ScoreUpdateDialog extends StatefulWidget {
-  final Map<String, String>? match;
+  final Map<String, dynamic> match;
+  final String matchId;
 
-  const ScoreUpdateDialog({super.key, this.match});
+  const ScoreUpdateDialog(
+      {super.key, required this.match, required this.matchId});
 
   @override
   State<ScoreUpdateDialog> createState() => _ScoreUpdateDialogState();
@@ -16,10 +19,16 @@ class _ScoreUpdateDialogState extends State<ScoreUpdateDialog> {
   final _team1ScoreController = TextEditingController();
   final _team2ScoreController = TextEditingController();
 
+  final MatchService _matchService = MatchService();
+
   @override
   void initState() {
-    _team1ScoreController.text = widget.match!["team_1_score"]!;
-    _team2ScoreController.text = widget.match!["team_2_score"]!;
+    _team1ScoreController.text = widget.match["scoreboard"]["teamScores"]
+            [widget.match['teams'][0]]
+        .toString();
+    _team2ScoreController.text = widget.match["scoreboard"]["teamScores"]
+            [widget.match['teams'][1]]
+        .toString();
     super.initState();
   }
 
@@ -36,10 +45,10 @@ class _ScoreUpdateDialogState extends State<ScoreUpdateDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(widget.match!["team_1_name"]!),
+                  Text(widget.match["teams"][0]),
                   SizedBox(height: 10),
                   TextFormField(
-                    enabled: widget.match!["status"] == "Live Now",
+                    enabled: widget.match["status"] == "live",
                     textAlign: TextAlign.center,
                     controller: _team1ScoreController,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -67,10 +76,10 @@ class _ScoreUpdateDialogState extends State<ScoreUpdateDialog> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(widget.match!["team_2_name"]!),
+                  Text(widget.match["teams"][1]),
                   SizedBox(height: 10),
                   TextFormField(
-                    enabled: widget.match!["status"] == "Live Now",
+                    enabled: widget.match["status"] == "live",
                     textAlign: TextAlign.center,
                     controller: _team2ScoreController,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -93,11 +102,31 @@ class _ScoreUpdateDialogState extends State<ScoreUpdateDialog> {
           ],
         ),
       ),
-      actions: widget.match!["status"] == "Live Now"
+      actions: widget.match["status"] == "live"
           ? [
               FilledButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
+                    bool success = await _matchService.updateMatchScore(
+                        matchId: widget.matchId,
+                        scoreTeam1:
+                            int.tryParse(_team1ScoreController.text) ?? 0,
+                        scoreTeam2:
+                            int.tryParse(_team2ScoreController.text) ?? 0);
+
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Score Update Successfully!'),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Failed to update Score!'),
+                        ),
+                      );
+                    }
                     Navigator.of(context).pop();
                   }
                 },

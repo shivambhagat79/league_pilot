@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/admin/match_tile.dart';
-import 'package:hunger_games/components/matches/sample_data.dart';
+import 'package:hunger_games/services/match_service.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 
 class MatchData extends StatefulWidget {
@@ -13,7 +14,9 @@ class MatchData extends StatefulWidget {
 
 class _MatchDataState extends State<MatchData> {
   final TournamentService _tournamentService = TournamentService();
+  final MatchService _matchService = MatchService();
   List<String> _filters = [];
+  Stream<QuerySnapshot<Map<String, dynamic>>> _matchStream = Stream.empty();
   bool _isLoading = false;
   String _selectedFilter = 'All';
 
@@ -25,9 +28,13 @@ class _MatchDataState extends State<MatchData> {
     final List<String> sports =
         await _tournamentService.getSports(widget.tournamentId);
 
+    final Stream<QuerySnapshot<Map<String, dynamic>>> matchStream =
+        _matchService.getMatchesForTournament(widget.tournamentId);
+
     setState(() {
       _filters = ['All', ...sports];
       _isLoading = false;
+      _matchStream = matchStream;
     });
   }
 
@@ -75,16 +82,44 @@ class _MatchDataState extends State<MatchData> {
                 ),
               ),
               SizedBox(height: 20),
-              Column(
-                children: matchData.where((e) {
-                  if (_selectedFilter == 'All') {
-                    return true;
-                  }
-                  return e['sport'] == _selectedFilter;
-                }).map((match) {
-                  return MatchTile(match: match);
-                }).toList(),
-              ),
+              StreamBuilder<QuerySnapshot>(
+                  stream: _matchStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    }
+
+                    final filteredDocs = snapshot.data!.docs.where((doc) {
+                      Map<String, dynamic> match =
+                          doc.data() as Map<String, dynamic>;
+
+                      if (_selectedFilter == "All") return true;
+
+                      if (_selectedFilter == match["sport"]) return true;
+
+                      return false;
+                    });
+
+                    if (filteredDocs.isEmpty) {
+                      return Container(
+                        padding: EdgeInsets.all(20),
+                        child:
+                            Text("No matches available for the selected sport"),
+                      );
+                    }
+
+                    return Column(
+                      children: filteredDocs.map((DocumentSnapshot document) {
+                        Map<String, dynamic> match =
+                            document.data() as Map<String, dynamic>;
+                        String id = document.id;
+                        return MatchTile(match: match, matchId: id);
+                      }).toList(),
+                    );
+                  }),
               SizedBox(height: 60),
             ],
           );

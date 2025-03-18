@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/admin/score_update_dialog.dart';
-import 'package:hunger_games/pages/admin/edit_match.dart';
+import 'package:hunger_games/services/match_service.dart';
 
 class MatchTile extends StatefulWidget {
-  final Map<String, String>? match;
-  const MatchTile({super.key, this.match});
+  final Map<String, dynamic> match;
+  final String matchId;
+  const MatchTile({super.key, required this.match, required this.matchId});
 
   @override
   State<MatchTile> createState() => _MatchTileState();
 }
 
-enum MenuOptions { edit, start, end, delete }
+enum MenuOptions { start, end, delete }
 
 class _MatchTileState extends State<MatchTile> {
+  final MatchService _matchService = MatchService();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -22,20 +25,20 @@ class _MatchTileState extends State<MatchTile> {
           thickness: 1,
         ),
         ListTile(
-          leading: widget.match!["status"] == "Live Now"
+          leading: widget.match["status"] == "live"
               ? LiveIcon()
-              : widget.match!["status"] == "Upcoming"
+              : widget.match["status"] == "upcoming"
                   ? Icon(Icons.timer_sharp)
                   : Icon(Icons.lock),
           // isThreeLine: true,
           title: Text(
-              "${widget.match!['team_1_name']!} v/s ${widget.match!['team_2_name']!}"),
+              "${widget.match['teams'][0]} v/s ${widget.match['teams'][1]}"),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.match!['sport']!),
+              Text(widget.match['sport']),
               Text(
-                  "${widget.match!['date']!} | ${widget.match!['start_time']!}"),
+                  "${widget.match['schedule']['date'].toDate().toString().split(' ')[0]} | ${widget.match['schedule']['starttime']['hour']}:${widget.match['schedule']['starttime']['minute']}"),
             ],
           ),
           trailing: Row(
@@ -44,7 +47,8 @@ class _MatchTileState extends State<MatchTile> {
               IconButton(
                 onPressed: () => showDialog(
                   context: context,
-                  builder: (context) => ScoreUpdateDialog(match: widget.match),
+                  builder: (context) => ScoreUpdateDialog(
+                      match: widget.match, matchId: widget.matchId),
                 ),
                 icon: Icon(Icons.scoreboard_outlined),
               ),
@@ -53,13 +57,6 @@ class _MatchTileState extends State<MatchTile> {
                 onSelected: (MenuOptions option) {
                   // Handle menu selection
                   switch (option) {
-                    case MenuOptions.edit:
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditMatchPage(),
-                        ),
-                      );
-                      break;
                     case MenuOptions.start:
                       showDialog(
                           context: context,
@@ -70,7 +67,26 @@ class _MatchTileState extends State<MatchTile> {
                                   'Are you sure you want to start the match?'),
                               actions: [
                                 FilledButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    bool success = await _matchService
+                                        .startMatch(widget.matchId);
+
+                                    if (success) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Match started!'),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text('Failed to start match!'),
+                                        ),
+                                      );
+                                    }
                                     Navigator.of(context).pop();
                                   },
                                   child: Text('Yes'),
@@ -95,7 +111,27 @@ class _MatchTileState extends State<MatchTile> {
                                   'Are you sure you want to start the match?\nThis action cannot be undone.'),
                               actions: [
                                 FilledButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    bool success = await _matchService
+                                        .deleteMatch(widget.matchId);
+
+                                    if (success) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Match Deleted!'),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text('Failed to delete match!'),
+                                        ),
+                                      );
+                                    }
+
                                     Navigator.of(context).pop();
                                   },
                                   child: Text('Yes'),
@@ -120,7 +156,25 @@ class _MatchTileState extends State<MatchTile> {
                                   'Are you sure you want to start the match?\nThe scores will be locked and cannot be updated after this action.'),
                               actions: [
                                 FilledButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    bool success = await _matchService
+                                        .endMatch(widget.matchId);
+
+                                    if (success) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Match Ended!'),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('Failed to end match!'),
+                                        ),
+                                      );
+                                    }
                                     Navigator.of(context).pop();
                                   },
                                   child: Text('Yes'),
@@ -139,17 +193,7 @@ class _MatchTileState extends State<MatchTile> {
                 },
                 itemBuilder: (BuildContext context) =>
                     <PopupMenuEntry<MenuOptions>>[
-                  PopupMenuItem<MenuOptions>(
-                    value: MenuOptions.edit,
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit),
-                        SizedBox(width: 8),
-                        Text('Edit'),
-                      ],
-                    ),
-                  ),
-                  if (widget.match!["status"] == "Upcoming")
+                  if (widget.match["status"] == "upcoming")
                     PopupMenuItem<MenuOptions>(
                       value: MenuOptions.start,
                       child: Row(
@@ -160,7 +204,7 @@ class _MatchTileState extends State<MatchTile> {
                         ],
                       ),
                     ),
-                  if (widget.match!["status"] == "Live Now")
+                  if (widget.match["status"] == "live")
                     PopupMenuItem<MenuOptions>(
                       value: MenuOptions.end,
                       child: Row(
