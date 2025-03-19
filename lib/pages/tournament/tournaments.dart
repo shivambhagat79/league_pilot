@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/pages/tournament/home.dart';
+import 'package:hunger_games/services/tournament_service.dart';
 
 class TournamentsPage extends StatefulWidget {
   const TournamentsPage({super.key});
@@ -9,20 +10,28 @@ class TournamentsPage extends StatefulWidget {
 }
 
 class _TournamentsPageState extends State<TournamentsPage> {
-  final _tournaments = [
-    {
-      "name": "Aarohan'25",
-      "hostInstitute": "IIT Ropar",
-    },
-    {
-      "name": "Inter IIT'25",
-      "hostInstitute": "IIT Kanpur",
-    },
-    {
-      "name": "IYSC'25",
-      "hostInstitute": "IIT Ropar",
-    }
-  ];
+  final TournamentService _tournamentService = TournamentService();
+  late List<Map<String, String>> _tournaments;
+  bool _isLoading = false;
+
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final tournaments = await _tournamentService.getActiveTournaments();
+
+    setState(() {
+      _tournaments = tournaments;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    _fetchData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,58 +75,67 @@ class _TournamentsPageState extends State<TournamentsPage> {
                     ),
                   ),
                   SizedBox(height: 50),
-                  Column(
-                    children: _tournaments
-                        .map(
-                          (tournament) => Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(
-                                  Colors.white.withAlpha(200),
-                                ),
-                                shape: WidgetStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                width: double.maxFinite,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      tournament["name"]!,
-                                      style: TextStyle(
-                                        color: Colors.teal.shade800,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      tournament["hostInstitute"]!,
-                                      style: TextStyle(
-                                        color: Colors.teal.shade500,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                  _isLoading
+                      ? CircularProgressIndicator(
+                          color: Colors.white,
                         )
-                        .toList(),
-                  ),
+                      : Column(
+                          children: _tournaments
+                              .map(
+                                (tournament) => Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(
+                                        Colors.white.withAlpha(200),
+                                      ),
+                                      shape: WidgetStateProperty.all(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) => HomePage(
+                                            tournamentId:
+                                                tournament["tournamentId"]!,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width: double.maxFinite,
+                                      padding: EdgeInsets.all(10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            tournament["tournamentName"]!,
+                                            style: TextStyle(
+                                              color: Colors.teal.shade800,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            tournament["hostInstitute"]!,
+                                            style: TextStyle(
+                                              color: Colors.teal.shade500,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
                 ],
               )),
         ),
