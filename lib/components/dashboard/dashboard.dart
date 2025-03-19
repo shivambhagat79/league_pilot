@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hunger_games/components/dashboard/dashboard_actions.dart';
+// import 'package:hunger_games/components/dashboard/dashboard_actions.dart';
 import 'package:hunger_games/components/dashboard/dashboard_activities.dart';
 import 'package:hunger_games/components/dashboard/dashboard_contacts.dart';
 import 'package:hunger_games/components/dashboard/dashboard_gallery.dart';
@@ -35,7 +35,7 @@ class _DashboardState extends State<Dashboard> {
         child: Column(
           children: [
             DashboardActivities(),
-            DashboardActions(),
+            // DashboardActions(),
             DashboardGallery(),
             SizedBox(height: 10),
             DashboardMap(),

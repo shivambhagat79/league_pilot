@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hunger_games/utils/sport_to_icon.dart';
 
 class LiveNowCard extends StatefulWidget {
-  final Map<String, String> match;
+  final Map<String, dynamic> match;
   const LiveNowCard({super.key, required this.match});
 
   @override
@@ -10,6 +12,18 @@ class LiveNowCard extends StatefulWidget {
 }
 
 class _LiveNowCardState extends State<LiveNowCard> {
+  bool _isVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _isVisible = !_isVisible;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +37,7 @@ class _LiveNowCardState extends State<LiveNowCard> {
       child: Column(
         children: [
           Text(
-            "${widget.match['date']!}  |  ${widget.match['start_time']!}  |  ${widget.match['venue']!}",
+            "${widget.match['schedule']['date'].toDate().toString().split(' ')[0]}  |  ${widget.match['schedule']['starttime']['hour']}:${widget.match['schedule']['starttime']['minute']}  |  ${widget.match['schedule']['venue']}",
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
@@ -43,7 +57,7 @@ class _LiveNowCardState extends State<LiveNowCard> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      sportToIcon[widget.match['sport']!],
+                      sportToIcon[widget.match['sport']],
                       color: Theme.of(context).colorScheme.onSurface,
                       size: 18,
                     ),
@@ -51,7 +65,7 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
-                        widget.match['sport']!,
+                        widget.match['sport'],
                         style: TextStyle(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -67,14 +81,16 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     Column(
                       children: [
                         Text(
-                          widget.match['team_1_score']!,
+                          widget.match['scoreboard']['teamScores']
+                                  [widget.match['teams'][0]]
+                              .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         Text(
-                          widget.match['team_1_name']!,
+                          widget.match['teams'][0],
                           style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -92,14 +108,16 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     Column(
                       children: [
                         Text(
-                          widget.match['team_2_score']!,
+                          widget.match['scoreboard']['teamScores']
+                                  [widget.match['teams'][1]]
+                              .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         Text(
-                          widget.match['team_2_name']!,
+                          widget.match['teams'][1],
                           style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -109,16 +127,20 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "Live Now",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
+                AnimatedOpacity(
+                  opacity: _isVisible ? 1.0 : 0.0,
+                  duration: Duration(seconds: 1),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade800,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "Live Now",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
                   ),
                 ),
               ],
@@ -131,7 +153,7 @@ class _LiveNowCardState extends State<LiveNowCard> {
 }
 
 class UpcomingCard extends StatelessWidget {
-  final Map<String, String> match;
+  final Map<String, dynamic> match;
   const UpcomingCard({super.key, required this.match});
 
   @override
@@ -147,7 +169,7 @@ class UpcomingCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "${match['date']!}  |  ${match['start_time']!}  |  ${match['venue']!}",
+            "${match['schedule']['date'].toDate().toString().split(' ')[0]}  |  ${match['schedule']['starttime']['hour']}:${match['schedule']['starttime']['minute']}  |  ${match['schedule']['venue']}",
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
@@ -167,7 +189,7 @@ class UpcomingCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      sportToIcon[match['sport']!],
+                      sportToIcon[match['sport']],
                       color: Theme.of(context).colorScheme.onSurface,
                       size: 18,
                     ),
@@ -175,7 +197,7 @@ class UpcomingCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
-                        match['sport']!,
+                        match['sport'],
                         style: TextStyle(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -189,7 +211,7 @@ class UpcomingCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      match['team_1_name']!,
+                      match['teams'][0],
                       style: TextStyle(
                         fontSize: 18,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -203,7 +225,7 @@ class UpcomingCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      match['team_2_name']!,
+                      match['teams'][1],
                       style: TextStyle(
                         fontSize: 18,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -221,7 +243,7 @@ class UpcomingCard extends StatelessWidget {
 }
 
 class ResultsCard extends StatelessWidget {
-  final Map<String, String> match;
+  final Map<String, dynamic> match;
   const ResultsCard({super.key, required this.match});
 
   @override
@@ -237,7 +259,7 @@ class ResultsCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "${match['date']!}  |  ${match['start_time']!}  |  ${match['venue']!}",
+            "${match['schedule']['date'].toDate().toString().split(' ')[0]}  |  ${match['schedule']['starttime']['hour']}:${match['schedule']['starttime']['minute']}  |  ${match['schedule']['venue']}",
             style: TextStyle(
               fontSize: 14,
               color: Colors.white,
@@ -257,7 +279,7 @@ class ResultsCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      sportToIcon[match['sport']!],
+                      sportToIcon[match['sport']],
                       color: Theme.of(context).colorScheme.onSurface,
                       size: 18,
                     ),
@@ -265,7 +287,7 @@ class ResultsCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: Text(
-                        match['sport']!,
+                        match['sport'],
                         style: TextStyle(
                           fontSize: 16,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -281,14 +303,15 @@ class ResultsCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          match['team_1_score']!,
+                          match['scoreboard']['teamScores'][match['teams'][0]]
+                              .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         Text(
-                          match['team_1_name']!,
+                          match['teams'][0],
                           style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -306,14 +329,15 @@ class ResultsCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          match['team_2_score']!,
+                          match['scoreboard']['teamScores'][match['teams'][1]]
+                              .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         Text(
-                          match['team_2_name']!,
+                          match['teams'][1],
                           style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -333,7 +357,7 @@ class ResultsCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    "Verdict: ${match['Verdict']!}",
+                    "Verdict: ${match['verdict']}",
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),

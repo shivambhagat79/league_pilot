@@ -8,7 +8,8 @@ import 'package:hunger_games/components/schedule/schedule.dart';
 import 'package:hunger_games/components/teams/teams.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String tournamentId;
+  const HomePage({super.key, required this.tournamentId});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,18 +18,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
 
-  final List<Widget> pages = <Widget>[
-    const Dashboard(),
-    const Matches(),
-    const PointsTable(),
-    const Schedule(),
-    const Teams(),
-  ];
+  late List<Widget> pages;
 
   void onDestinationSelected(int index) {
     setState(() {
       currentPageIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    pages = <Widget>[
+      const Dashboard(),
+      Matches(tournamentId: widget.tournamentId),
+      const PointsTable(),
+      const Schedule(),
+      const Teams(),
+    ];
+    super.initState();
   }
 
   @override
