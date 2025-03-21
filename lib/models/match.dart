@@ -9,7 +9,7 @@ class Match {
   final String sport; // The sport being played (could be an ID or name)
   final Scoreboard scoreboard; // Dynamic scoreboard for the match
   final List<String> teams; // List of participating team IDs
-  final Schedule schedule; // The match schedule details
+  final Schedule schedule; // The match archive details
   final String
       status; // For backend use, e.g., "upcoming", "running", "previous"
   final String

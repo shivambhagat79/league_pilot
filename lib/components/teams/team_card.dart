@@ -19,18 +19,17 @@ class TeamCard extends StatefulWidget {
 
 class _TeamCardState extends State<TeamCard> {
 
-  void _navigateToTeamDetails() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TeamDetails(
-            teamName: widget.teamName,
-            logoUrl: widget.logoUrl, // Pass team logo
-            description: widget.description, // Pass team description
-        ),
-      ),
-    );
-  }
+  // void _navigateToTeamDetails() {
+  //   Navigator.of(context).push(
+  //     MaterialPageRoute(
+  //       builder: (context) => TeamDetails(
+  //           teamName: widget.teamName,
+  //           logoUrl: widget.logoUrl, // Pass team logo
+  //           description: widget.description, // Pass team description
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +57,17 @@ class _TeamCardState extends State<TeamCard> {
               children: <Widget>[
                 TextButton(
                   child: const Text('SEE BIO'),
-                  onPressed: _navigateToTeamDetails,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TeamDetails(
+                          teamName: widget.teamName,
+                          logoUrl: widget.logoUrl, // Pass team logo
+                          description: widget.description, // Pass team description
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 8),
               ],

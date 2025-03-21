@@ -91,6 +91,13 @@ class _TeamsState extends State<Teams> {
             ),
             const SizedBox(height: 10),
 
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: Text("© League Pilot. All rights reserved."),
+            ),
+            SizedBox(height: 80), // Adds spacing at the bottom
+
+
           ],
         ),
       ),

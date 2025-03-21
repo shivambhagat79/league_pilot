@@ -15,8 +15,9 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
     Icons.home,
     Icons.sports_cricket,
     Icons.scoreboard,
-    Icons.calendar_month,
-    Icons.group
+    Icons.group,
+    Icons.archive
+
   ];
 
   @override

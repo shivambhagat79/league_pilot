@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/pages/tournament/gallery.dart';
+import 'package:hunger_games/pages/tournament/sample_images.dart';
 
 class DashboardGallery extends StatelessWidget {
   const DashboardGallery({super.key});
@@ -55,20 +56,35 @@ class DashboardGallery extends StatelessWidget {
                   ),
                 ),
               ] +
-              List.generate(8, (index) {
-                return Container(
-                  width: 120,
-                  height: 200,
-                  margin: EdgeInsets.only(left: 10),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.asset(
-                      "assets/images/components/gallery.jpg",
-                      fit: BoxFit.cover,
+              imageData.take(8).map((image) =>
+                  Container(
+                    width: 120,
+                    height: 200,
+                    margin: EdgeInsets.only(left: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        image["url"]!,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                );
-              }),
+                  )
+              ).toList()
+
+          // List.generate(8, (index) {
+              //   return Container(
+              //     width: 120,
+              //     height: 200,
+              //     margin: EdgeInsets.only(left: 10),
+              //     child: ClipRRect(
+              //       borderRadius: BorderRadius.circular(20),
+              //       child: Image.asset(
+              //         "assets/images/components/gallery.jpg",
+              //         fit: BoxFit.cover,
+              //       ),
+              //     ),
+              //   );
+              // }),
         ),
       ),
     );
