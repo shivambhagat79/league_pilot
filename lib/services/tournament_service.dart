@@ -66,11 +66,68 @@ class TournamentService {
       // 7. Save the tournament data to Firestore
       await docRef.set(newTournament.toMap());
 
+      // initialize the points table for the tournament
+      await initializePointsTables(
+        tournamentId: docRef.id,
+        contingents: contingents,
+        sports: sports,
+      );
       // 8. Return the generated document ID
       return docRef.id;
     } catch (e) {
       print("Error creating tournament: $e");
       return null;
+    }
+  }
+
+  Future<void> initializePointsTables({
+    required String tournamentId,
+    required List<String> contingents,
+    required List<String> sports,
+  }) async {
+    // 1) Initialize the "general" doc with 0 medals for each contingent
+    Map<String, dynamic> generalStandings = {};
+    for (var contingent in contingents) {
+      generalStandings[contingent] = {
+        "gold": 0,
+        "silver": 0,
+        "bronze": 0,
+        "points": 0, // total points from medals
+      };
+    }
+
+    await _firestore
+        .collection('tournaments')
+        .doc(tournamentId)
+        .collection('pointsTables')
+        .doc('general')
+        .set({
+      "standings": generalStandings,
+    });
+
+    // 2) For each sport, create a doc with W/L/draw for each contingent
+    for (var sport in sports) {
+      Map<String, dynamic> sportStandings = {};
+      for (var contingent in contingents) {
+        sportStandings[contingent] = {
+          "wins": 0,
+          "losses": 0,
+          "draws": 0,
+          "points": 0, // total points for that sport
+        };
+      }
+
+      // Example doc ID: "sport_football"
+      String docId = "sport_$sport".replaceAll(' ', '_').toLowerCase();
+
+      await _firestore
+          .collection('tournaments')
+          .doc(tournamentId)
+          .collection('pointsTables')
+          .doc(docId)
+          .set({
+        "standings": sportStandings,
+      });
     }
   }
 
