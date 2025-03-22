@@ -81,55 +81,57 @@ class TournamentService {
   }
 
   Future<void> initializePointsTables({
-    required String tournamentId,
-    required List<String> contingents,
-    required List<String> sports,
-  }) async {
-    // 1) Initialize the "general" doc with 0 medals for each contingent
-    Map<String, dynamic> generalStandings = {};
+  required String tournamentId,
+  required List<String> contingents,
+  required List<String> sports,
+}) async {
+  // 1) "general" doc for medals (unchanged)
+  Map<String, dynamic> generalStandings = {};
+  for (var contingent in contingents) {
+    generalStandings[contingent] = {
+      "gold": 0,
+      "silver": 0,
+      "bronze": 0,
+      "points": 0,
+    };
+  }
+
+  await _firestore
+      .collection('tournaments')
+      .doc(tournamentId)
+      .collection('pointsTables')
+      .doc('general')
+      .set({
+        "standings": generalStandings,
+      });
+
+  // 2) One doc per sport, now with goalDifference
+  for (var sport in sports) {
+    Map<String, dynamic> sportStandings = {};
     for (var contingent in contingents) {
-      generalStandings[contingent] = {
-        "gold": 0,
-        "silver": 0,
-        "bronze": 0,
-        "points": 0, // total points from medals
+      sportStandings[contingent] = {
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "points": 0,
+        "goalDifference": 0, // NEW FIELD to store the point difference
       };
     }
+  // try to refer to all sports as sport_football, sport_volleyball, etc.
+    String docId = "sport_$sport".replaceAll(' ', '_').toLowerCase();
 
     await _firestore
         .collection('tournaments')
         .doc(tournamentId)
         .collection('pointsTables')
-        .doc('general')
+        .doc(docId)
         .set({
-      "standings": generalStandings,
-    });
-
-    // 2) For each sport, create a doc with W/L/draw for each contingent
-    for (var sport in sports) {
-      Map<String, dynamic> sportStandings = {};
-      for (var contingent in contingents) {
-        sportStandings[contingent] = {
-          "wins": 0,
-          "losses": 0,
-          "draws": 0,
-          "points": 0, // total points for that sport
-        };
-      }
-
-      // Example doc ID: "sport_football"
-      String docId = "sport_$sport".replaceAll(' ', '_').toLowerCase();
-
-      await _firestore
-          .collection('tournaments')
-          .doc(tournamentId)
-          .collection('pointsTables')
-          .doc(docId)
-          .set({
-        "standings": sportStandings,
-      });
-    }
+          "standings": sportStandings,
+        });
   }
+
+  print("Initialized points tables (including goalDifference) for $tournamentId");
+}
 
   Future<List<Map<String, String>>> getActiveTournaments() async {
     try {
@@ -158,25 +160,24 @@ class TournamentService {
 
   //Saaransh
 
-  // Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
-  //   try {
-  //     DocumentSnapshot snapshot =
-  //     await _firestore.collection('tournaments').doc(tournamentId).get();
-  //
-  //     if (!snapshot.exists) {
-  //       // If the document doesn't exist, return an empty map.
-  //       return {};
-  //     }
-  //
-  //     // Convert document data to a Map
-  //     Map<String, dynamic> tournamentData = snapshot.data() as Map<String, dynamic>;
-  //
-  //     return tournamentData;
-  //   } catch (e) {
-  //     print("Error retrieving tournament with ID $tournamentId: $e");
-  //     return {};
-  //   }
-  // }
+   Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
+  try {
+     DocumentSnapshot snapshot =
+     await _firestore.collection('tournaments').doc(tournamentId).get();
+
+     if (!snapshot.exists) {
+       // If the document doesn't exist, return an empty map./
+       return {};
+     }
+     // Convert document data to a Map
+     Map<String, dynamic> tournamentData = snapshot.data() as Map<String, dynamic>;
+
+     return tournamentData;
+   } catch (e) {
+     print("Error retrieving tournament with ID $tournamentId: $e");
+     return {};
+   }
+ }
 
 
   Future<List<String>> getContingents(String tournamentId) async {
