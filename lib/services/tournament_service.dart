@@ -256,7 +256,7 @@ class TournamentService {
       await _firestore.collection('tournaments')
           .doc(tournamentId)
           .update({
-            'staus':'results'
+            'status':'results'
           });
       return true;
     } catch (e) {
@@ -265,7 +265,7 @@ class TournamentService {
     }
   }
 
-  Future<void> getSportsTable({String sports, String tournamentId}) async{
+  Future<void> uploadImage({String imgURL, String tournamentId}) async{
     try {
       await _firestore.collection('tournaments')
           .doc(tournamentId)
