@@ -249,4 +249,32 @@ class TournamentService {
       return [];
     }
   }
+  //Ishaan
+  
+  Future<bool> endTournament(String tournamentId) async{
+    try {
+      await _firestore.collection('tournaments')
+          .doc(tournamentId)
+          .update({
+            'staus':'results'
+          });
+      return true;
+    } catch (e) {
+      print("Error while Ending Tournament: $e");
+      return false;
+    }
+  }
+
+  Future<void> getSportsTable({String sports, String tournamentId}) async{
+    try {
+      await _firestore.collection('tournaments')
+          .doc(tournamentId)
+          .update({
+            'pictureUrls': FieldValue.arrayUnion([imgURL])
+          });
+      print("Image URL added successfully for tournament: $tournamentId");
+    } catch (e) {
+      print("Error updating picture URLs for tournament: $e");
+    }
+  }
 }
