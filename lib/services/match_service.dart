@@ -56,7 +56,7 @@ class MatchService {
       // Default status and verdict
       String status = 'upcoming';
       String verdict = 'to be decided';
-
+      int statusPriority = 1;
       // Create the teams list
       List<String> teams = [team1, team2];
 
@@ -73,6 +73,7 @@ class MatchService {
         schedule: schedule,
         status: status,
         verdict: verdict,
+        statusPriority: statusPriority,
       );
 
       // Create a new document in the 'matches' collection
@@ -88,11 +89,13 @@ class MatchService {
       return null;
     }
   }
+
   // these functions return bool telling the user if status was updated or not
-   Future<bool> startMatch(String matchId) async {
+  Future<bool> startMatch(String matchId) async {
     try {
       await _firestore.collection('matches').doc(matchId).update({
         'status': 'live',
+        'statusPriority': 0,
       });
       return true; // Indicate success
     } catch (e) {
@@ -105,12 +108,67 @@ class MatchService {
   Future<bool> endMatch(String matchId) async {
     try {
       await _firestore.collection('matches').doc(matchId).update({
-        'status': 'end',
+        'status': 'results',
+        'statusPriority': 2,
       });
       return true; // Indicate success
     } catch (e) {
       print('Error ending match: $e');
       return false; // Indicate failure
+    }
+  }
+
+  /// Streams all matches for [tournamentId], sorted by statusPriority (0 -> 1 -> 2).
+  Stream<List<Match>> getMatchesForTournament(String tournamentId) {
+    return _firestore
+        .collection('matches')
+        .where('tournament', isEqualTo: tournamentId)
+        .orderBy('statusPriority')
+        .snapshots()
+        .map((query) {
+      return query.docs.map((doc) {
+        // Make sure Match.fromMap can handle doc.id if needed
+        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
+//returns a bool if the score was updated or not
+  Future<bool> updateMatchScore({
+    required String matchId,
+    required int scoreTeam1,
+    required int scoreTeam2,
+  }) async {
+    try {
+      // 1. Get the match document
+      final docRef = _firestore.collection('matches').doc(matchId);
+      final snapshot = await docRef.get();
+
+      // 2. Check if the match document exists
+      if (!snapshot.exists) {
+        print('Match not found for ID: $matchId');
+        return false;
+      }
+
+      // 3. Extract the teams array
+      final data = snapshot.data() as Map<String, dynamic>;
+      final List<String> teams = List<String>.from(data['teams'] ?? []);
+
+      // 4. Ensure we have at least two teams
+      if (teams.length < 2) {
+        print('Not enough teams to update scores in match: $matchId');
+        return false;
+      }
+
+      // 5. Update the scores for teams[0] and teams[1] in the scoreboard
+      await docRef.update({
+        'scoreboard.teamScores.${teams[0]}': scoreTeam1,
+        'scoreboard.teamScores.${teams[1]}': scoreTeam2,
+      });
+
+      return true;
+    } catch (e) {
+      print('Error updating match scores: $e');
+      return false;
     }
   }
 }
