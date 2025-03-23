@@ -158,25 +158,25 @@ class TournamentService {
 
   //Saaransh
 
-  Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
-    try {
-      DocumentSnapshot snapshot =
-      await _firestore.collection('tournaments').doc(tournamentId).get();
-
-      if (!snapshot.exists) {
-        // If the document doesn't exist, return an empty map.
-        return {};
-      }
-
-      // Convert document data to a Map
-      Map<String, dynamic> tournamentData = snapshot.data() as Map<String, dynamic>;
-
-      return tournamentData;
-    } catch (e) {
-      print("Error retrieving tournament with ID $tournamentId: $e");
-      return {};
-    }
-  }
+  // Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
+  //   try {
+  //     DocumentSnapshot snapshot =
+  //     await _firestore.collection('tournaments').doc(tournamentId).get();
+  //
+  //     if (!snapshot.exists) {
+  //       // If the document doesn't exist, return an empty map.
+  //       return {};
+  //     }
+  //
+  //     // Convert document data to a Map
+  //     Map<String, dynamic> tournamentData = snapshot.data() as Map<String, dynamic>;
+  //
+  //     return tournamentData;
+  //   } catch (e) {
+  //     print("Error retrieving tournament with ID $tournamentId: $e");
+  //     return {};
+  //   }
+  // }
 
 
   Future<List<String>> getContingents(String tournamentId) async {
