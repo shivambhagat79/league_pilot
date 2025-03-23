@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/services/auth.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
+import 'package:hunger_games/services/tournament_service.dart';
 
 class PlayerRegForm extends StatefulWidget {
   final Function toggleAuth;
@@ -15,22 +16,18 @@ class PlayerRegForm extends StatefulWidget {
 class _PlayerRegFormState extends State<PlayerRegForm> {
   final _formKey = GlobalKey<FormState>();
   final AuthService _authService = AuthService();
+  final TournamentService _tournamentService = TournamentService();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  final List<String> _tournaments = ["Aarohan'25", "Inter IIT'25"];
-  final List<String> _contingents = [
-    "IIT Ropar",
-    "IIT Kanpur",
-    "IIT Delhi",
-    "IIT Mandi"
-  ];
+  late List<Map<String, String>> _tournaments;
+  List<String> _contingents = [];
 
-  String? _selectedTournament;
-  String? _selectedContingent;
+  String? _selectedTournament; // ID
+  String? _selectedContingent; // Name
   bool _isLoading = false;
 
   Future<void> _handleRegister() async {
@@ -94,6 +91,26 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
 
       // For now, we'll just navigate to the PlayerPage.
     }
+  }
+
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<Map<String, String>> tournaments =
+        await _tournamentService.getActiveTournaments();
+
+    setState(() {
+      _tournaments = tournaments;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    _fetchData();
+    super.initState();
   }
 
   @override
@@ -209,15 +226,22 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
                     ),
                   ),
                   value: _selectedTournament,
-                  items: _tournaments.map((role) {
+                  items: _tournaments.map((tournament) {
                     return DropdownMenuItem(
-                      value: role,
-                      child: Text(role),
+                      value: tournament['tournamentId'],
+                      child: Text(tournament['tournamentName']!),
                     );
                   }).toList(),
-                  onChanged: (newValue) {
+                  onChanged: (newValue) async {
+                    setState(() {
+                      _contingents = [];
+                      _selectedContingent = null;
+                    });
+                    List<String> contingents =
+                        await _tournamentService.getContingents(newValue!);
                     setState(() {
                       _selectedTournament = newValue;
+                      _contingents = contingents;
                     });
                   },
                   validator: (value) =>

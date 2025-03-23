@@ -4,7 +4,6 @@ import 'package:hunger_games/components/common/floating_bottom_nav_bar.dart';
 import 'package:hunger_games/components/dashboard/dashboard.dart';
 import 'package:hunger_games/components/matches/matches.dart';
 import 'package:hunger_games/components/points_table/points_table.dart';
-import 'package:hunger_games/components/schedule/schedule.dart';
 import 'package:hunger_games/components/teams/teams.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,7 +31,6 @@ class _HomePageState extends State<HomePage> {
       const Dashboard(),
       Matches(tournamentId: widget.tournamentId),
       const PointsTable(),
-      const Schedule(),
       const Teams(),
     ];
     super.initState();
