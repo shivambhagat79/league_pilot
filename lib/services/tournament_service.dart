@@ -158,25 +158,25 @@ class TournamentService {
 
   //Saaransh
 
-  // Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
-  //   try {
-  //     DocumentSnapshot snapshot =
-  //     await _firestore.collection('tournaments').doc(tournamentId).get();
-  //
-  //     if (!snapshot.exists) {
-  //       // If the document doesn't exist, return an empty map.
-  //       return {};
-  //     }
-  //
-  //     // Convert document data to a Map
-  //     Map<String, dynamic> tournamentData = snapshot.data() as Map<String, dynamic>;
-  //
-  //     return tournamentData;
-  //   } catch (e) {
-  //     print("Error retrieving tournament with ID $tournamentId: $e");
-  //     return {};
-  //   }
-  // }
+  Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
+    try {
+      DocumentSnapshot snapshot =
+      await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        // If the document doesn't exist, return an empty map.
+        return {};
+      }
+
+      // Convert document data to a Map
+      Map<String, dynamic> tournamentData = snapshot.data() as Map<String, dynamic>;
+
+      return tournamentData;
+    } catch (e) {
+      print("Error retrieving tournament with ID $tournamentId: $e");
+      return {};
+    }
+  }
 
 
   Future<List<String>> getContingents(String tournamentId) async {
@@ -249,4 +249,74 @@ class TournamentService {
       return [];
     }
   }
+
+  //Saaransh
+  Future<bool> addSportToTournament(String tournamentId, String sport) async {
+    try {
+      DocumentSnapshot snapshot =
+      await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        return false;
+      }
+
+      // Cast the snapshot data to a Map
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // Retrieve the current list of sports
+      List<String> sports = List<String>.from(data['sports'] ?? []);
+
+      // Check if the sport is already in the list
+      if (!sports.contains(sport)) {
+        sports.add(sport);
+
+        // Update Firestore with the new list
+        await _firestore.collection('tournaments').doc(tournamentId).update({
+          'sports': sports,
+        });
+      }
+
+      return true;
+    } catch (e) {
+      print("Error adding sport $sport to Tournament with Id $tournamentId: $e");
+      return false;
+    }
+  }
+
+  //Saaransh
+  Future<bool> removeSportFromTournament(String tournamentId, String sport) async {
+    try {
+      DocumentSnapshot snapshot =
+      await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        return false;
+      }
+
+      // Cast the snapshot data to a Map
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // Retrieve the current list of sports
+      List<String> sports = List<String>.from(data['sports'] ?? []);
+
+      // Check if the sport exists in the list
+      if (sports.contains(sport)) {
+        sports.remove(sport);
+
+        // Update Firestore with the modified list
+        await _firestore.collection('tournaments').doc(tournamentId).update({
+          'sports': sports,
+        });
+
+        return true; // Sport successfully removed
+      }
+
+      return false; // Sport was not in the list
+    } catch (e) {
+      print("Error removing sport $sport from Tournament with Id $tournamentId: $e");
+      return false;
+    }
+  }
+
+
 }
