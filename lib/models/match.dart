@@ -7,6 +7,7 @@ class Match {
       tournament; // name of  tournament this match is part of
   final String sport; // The sport being played (could be an ID or name)
   final String gender;
+  final String scoreemail;
   final int winpoints;
   final int losepoints;
   final int drawpoints;
@@ -23,6 +24,7 @@ class Match {
     required this.tournament,
     required this.sport,
     required this.gender,
+    required this.scoreemail,
     required this.winpoints,
     required this.losepoints,
     required this.drawpoints,
@@ -40,6 +42,7 @@ class Match {
       tournament: map['tournament'] ?? '',
       sport: map['sport'] ?? '',
       gender: map['gender'] ?? '',
+      scoreemail: map['scoreemail'] ?? '',
       winpoints: map['winpoints'] ?? 0,
       losepoints: map['losepoints'] ?? 0,
       drawpoints: map['drawpoints'] ?? 0,
@@ -61,6 +64,7 @@ class Match {
       'sport': sport,
       'gender': gender,
       'winpoints': winpoints,
+      'scoreemail': scoreemail,
       'losepoints': losepoints,
       'drawpoints': drawpoints,
       'scoreboard': scoreboard.toMap(),

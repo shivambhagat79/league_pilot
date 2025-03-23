@@ -31,6 +31,7 @@ class Tournament {
     required this.admins,
     required this.sports,
     required this.contingents,
+
     // required this.matchIds,
     //required this.pointDistribution,
     required this.goldMedalPoints,
