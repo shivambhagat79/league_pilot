@@ -3,6 +3,7 @@ import 'package:flutter/material.dart'; // for TimeOfDay
 import '../models/match.dart';
 import '../models/schedule.dart';
 import '../models/scoreboard.dart';
+import 'points_service.dart';
 
 class MatchService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -107,15 +108,107 @@ class MatchService {
   /// Set the match status to "end" (or "ended").
   Future<bool> endMatch(String matchId) async {
     try {
+      // Step A: Retrieve the match document
+      PointsService pointsService = PointsService();
+      DocumentSnapshot matchSnap =
+          await _firestore.collection('matches').doc(matchId).get();
+
+      if (!matchSnap.exists) {
+        print("Match doc not found for ID: $matchId");
+        return false;
+      }
+
+      Map<String, dynamic> matchData = matchSnap.data() as Map<String, dynamic>;
+      String tournamentId = matchData['tournament'] ?? '';
+      String sport = matchData['sport'] ?? 'unknown_sport';
+
+      // e.g. ["teamAId", "teamBId"]
+      List<String> teamIds = List<String>.from(matchData['teams'] ?? []);
+      if (teamIds.length < 2) {
+        print("Not enough teams to finalize match $matchId");
+        return false;
+      }
+
+      // scoreboard.teamScores: e.g. { "teamAId": 3, "teamBId": 1 }
+      Map<String, dynamic> scoreboard = matchData['scoreboard'] ?? {};
+      Map<String, dynamic> teamScores =
+          Map<String, dynamic>.from(scoreboard['teamScores'] ?? {});
+
+      // e.g., 3 for a win, 0 for a loss, 1 for a draw (or fetch from Tournament doc)
+      int winPoints = matchData['winPoints'] ?? 3;
+      int losePoints = matchData['losePoints'] ?? 0;
+      int drawPoints = matchData['drawPoints'] ?? 1;
+
+      // Step B: Fetch the contingents for each team
+      // For simplicity, assume exactly 2 teams:
+      String teamAId = teamIds[0];
+      String teamBId = teamIds[1];
+
+      String contingentA = await _getContingentForTeam(teamAId);
+      String contingentB = await _getContingentForTeam(teamBId);
+
+      int scoreA = teamScores[teamAId] ?? 0;
+      int scoreB = teamScores[teamBId] ?? 0;
+
+      // Step C: Determine winner/draw
+      String verdict;
+      if (scoreA > scoreB) {
+        verdict = contingentA; // the winner is ContingentA
+      } else if (scoreB > scoreA) {
+        verdict = contingentB; // the winner is ContingentB
+      } else {
+        verdict = "draw";
+      }
+
+      // Step D: Update match doc with verdict and status
       await _firestore.collection('matches').doc(matchId).update({
-        'status': 'results',
+        'verdict': verdict,
+        'status': 'ended',
         'statusPriority': 2,
       });
-      return true; // Indicate success
+
+      // Step E: Update points table for these contingents
+      // We create a doc ID like "sport_football"
+      String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
+
+      await pointsService.updatePointsTable(
+        tournamentId: tournamentId,
+        sportDocId: sportDocId,
+        contingentA: contingentA,
+        contingentB: contingentB,
+        scoreA: scoreA,
+        scoreB: scoreB,
+        winPoints: winPoints,
+        losePoints: losePoints,
+        drawPoints: drawPoints,
+      );
+
+      print("Match $matchId finalized. Winner/draw: $verdict");
+      return true;
     } catch (e) {
-      print('Error ending match: $e');
-      return false; // Indicate failure
+      print("Error finalizing match: $e");
+      return false;
     }
+  }
+
+  Future<String> _getContingentForTeam(String teamName) async {
+    QuerySnapshot querySnap = await _firestore
+        .collection('teams')
+        .where('name', isEqualTo: teamName)
+        .limit(1)
+        .get();
+
+    if (querySnap.docs.isEmpty) {
+      print("No team doc found for name: $teamName");
+      return "UnknownContingent";
+    }
+
+    // Take the first matching doc
+    DocumentSnapshot teamDoc = querySnap.docs.first;
+    Map<String, dynamic> teamData = teamDoc.data() as Map<String, dynamic>;
+
+    // Return the contingent ID (or name) from that doc
+    return teamData['contingentId'] ?? "UnknownContingent";
   }
 
   /// Streams all matches for [tournamentId], sorted by statusPriority (0 -> 1 -> 2).
