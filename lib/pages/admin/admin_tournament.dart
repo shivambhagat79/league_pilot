@@ -4,6 +4,7 @@ import 'package:hunger_games/components/admin/sports_data.dart';
 import 'package:hunger_games/components/admin/tournament_data.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
 import 'package:hunger_games/pages/admin/create_match.dart';
+import 'package:hunger_games/pages/admin/update_tournament.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 
 class AdminTourrnamentPage extends StatefulWidget {
@@ -19,7 +20,7 @@ class AdminTourrnamentPage extends StatefulWidget {
 class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
   int _selectedIndex = 0;
   late final List<Widget> _pages;
-  final List<String> _remainingSports = [
+  final List<String> _allSports = [
     "Football",
     "Cricket",
     "Basketball",
@@ -30,6 +31,7 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
     "Chess"
   ];
   List<String> _tournamentSports = [];
+  List<String> _remainingSports = [];
   final TournamentService _tournamentService = TournamentService();
   String? _selectedSport;
 
@@ -38,8 +40,9 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
         await _tournamentService.getSports(widget.tournamentId);
     setState(() {
       _tournamentSports = sports;
-      _remainingSports
-          .removeWhere((element) => _tournamentSports.contains(element));
+      _remainingSports = _allSports
+          .where((element) => !_tournamentSports.contains(element))
+          .toList();
     });
   }
 
@@ -130,18 +133,45 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
                                       });
                                     },
                                     validator: (value) => value == null
-                                        ? 'Please select a tournamnet'
+                                        ? 'Please select a sport'
                                         : null,
                                   ),
                                 ],
                               ),
                               actions: [
                                 FilledButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    if (_selectedSport != null) {
+                                      bool success = await _tournamentService
+                                          .addSportToTournament(
+                                              widget.tournamentId,
+                                              _selectedSport!);
+                                      if (success) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              '$_selectedSport added. Refresh the page to see the changes.'),
+                                        ));
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          content: Text(
+                                              'Failed to add $_selectedSport. Please try again.'),
+                                        ));
+                                      }
+                                    }
+                                    setState(() {
+                                      _selectedSport = null;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
                                   child: Text('Add'),
                                 ),
                                 OutlinedButton(
                                   onPressed: () {
+                                    setState(() {
+                                      _selectedSport = null;
+                                    });
                                     Navigator.of(context).pop();
                                   },
                                   child: Text("Cancel"),
@@ -154,7 +184,24 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
                   label: Text('Add Sport'),
                   icon: Icon(Icons.add),
                 )
-              : null,
+              : _selectedIndex == 2
+                  ? FloatingActionButton.extended(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => UpdateTournamentPage(
+                              tournamentId: widget.tournamentId,
+                            ),
+                          ),
+                        );
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onSecondary,
+                      icon: Icon(Icons.edit),
+                      label: Text('Update Info'),
+                    )
+                  : null,
       child: _pages[_selectedIndex],
     );
   }

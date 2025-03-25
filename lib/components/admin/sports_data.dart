@@ -63,6 +63,37 @@ class _SportsDataState extends State<SportsData> {
                             Text(sport),
                           ],
                         ),
+                        trailing: IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text('Delete Sport'),
+                                      content: Text(
+                                          'Are you sure you want to delete this sport?'),
+                                      actions: [
+                                        FilledButton(
+                                          onPressed: () async {
+                                            await _tournamentService
+                                                .removeSportFromTournament(
+                                                    widget.tournamentId, sport);
+                                            _fetchSports();
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Delete'),
+                                        ),
+                                        OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            icon: Icon(Icons.delete)),
                       ),
                       Divider(height: 0, thickness: 1),
                     ],
