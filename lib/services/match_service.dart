@@ -211,6 +211,181 @@ class MatchService {
     return teamData['contingentId'] ?? "UnknownContingent";
   }
 
+  /// Ends the specified sport by:
+  /// 1) Fetching the tournament doc (to get gold/silver/bronze medal points).
+  /// 2) Retrieving the sport's points table doc (e.g. "sport_football").
+  /// 3) Sorting contingents by points desc, then goalDifference desc.
+  /// 4) Awarding gold, silver, bronze to the top 3.
+  /// 5) Updating the "general" doc in pointsTables to increment medal counts & points.
+  ///
+  /// [tournamentId]: Firestore doc ID of the tournament.
+  /// [sportName]: e.g. "Football" (used to build the doc ID "sport_football").
+  ///
+  /// Returns `true` if successful, otherwise `false`.
+  Future<bool> endSport({
+    required String tournamentId,
+    required String sportName,
+  }) async {
+    try {
+      // 1) Fetch the tournament doc for medal point distribution
+      DocumentSnapshot tourneySnap =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+      if (!tourneySnap.exists) {
+        print("Tournament not found: $tournamentId");
+        return false;
+      }
+      Map<String, dynamic> tourneyData =
+          tourneySnap.data() as Map<String, dynamic>;
+      int goldMedalPoints = tourneyData['goldMedalPoints'] ?? 0;
+      int silverMedalPoints = tourneyData['silverMedalPoints'] ?? 0;
+      int bronzeMedalPoints = tourneyData['bronzeMedalPoints'] ?? 0;
+
+      // 2) Retrieve the sport's points table doc
+      String sportDocId = _buildSportDocId(sportName);
+      DocumentSnapshot sportSnap = await _firestore
+          .collection('tournaments')
+          .doc(tournamentId)
+          .collection('pointsTables')
+          .doc(sportDocId)
+          .get();
+      if (!sportSnap.exists) {
+        print("Sport doc not found: $sportDocId in tournament $tournamentId");
+        return false;
+      }
+
+      Map<String, dynamic> sportData = sportSnap.data() as Map<String, dynamic>;
+      Map<String, dynamic> standingsMap =
+          Map<String, dynamic>.from(sportData['standings'] ?? {});
+      if (standingsMap.isEmpty) {
+        print("No standings found for sport: $sportName");
+        return false;
+      }
+
+      // 3) Convert standings to a list and sort them
+      List<Map<String, dynamic>> sortedStandings =
+          _parseAndSortStandings(standingsMap);
+
+      // 4) Determine the top 3 medal winners (if available)
+      List<Map<String, dynamic>> medalWinners = _getTopThreeContingents(
+        sortedStandings,
+        goldMedalPoints,
+        silverMedalPoints,
+        bronzeMedalPoints,
+      );
+      if (medalWinners.isEmpty) {
+        print("Less than 1 contingent found in $sportName standings.");
+        return true; // Not an error, just no medals to award
+      }
+
+      // 5) Build the Firestore update map for awarding medals in the "general" doc
+      Map<String, dynamic> updateMap = _buildMedalsUpdateMap(medalWinners);
+
+      // 6) Apply the update to the "general" doc
+      DocumentReference generalDocRef = _firestore
+          .collection('tournaments')
+          .doc(tournamentId)
+          .collection('pointsTables')
+          .doc('general');
+
+      await generalDocRef.update(updateMap);
+
+      print(
+          "Sport '$sportName' ended. Medals awarded to top 3 in tournament $tournamentId.");
+      return true;
+    } catch (e) {
+      print("Error ending sport $sportName: $e");
+      return false;
+    }
+  }
+
+  /// Helper to build the doc ID for a given sport (e.g. "Football" => "sport_football")
+  String _buildSportDocId(String sportName) {
+    return "sport_${sportName.replaceAll(' ', '_').toLowerCase()}";
+  }
+
+  /// Converts the standings map into a list of { "contingentId", "points", "goalDifference" }
+  /// and sorts them descending by points, then by goalDifference.
+  List<Map<String, dynamic>> _parseAndSortStandings(
+      Map<String, dynamic> standingsMap) {
+    List<Map<String, dynamic>> list = [];
+    standingsMap.forEach((contingentId, stats) {
+      final statsMap = stats as Map<String, dynamic>;
+      list.add({
+        'contingentId': contingentId,
+        'points': statsMap['points'] ?? 0,
+        'goalDifference': statsMap['goalDifference'] ?? 0,
+      });
+    });
+
+    // Sort descending by points, then by goalDifference
+    list.sort((a, b) {
+      int pointsA = a['points'];
+      int pointsB = b['points'];
+      if (pointsB != pointsA) {
+        return pointsB - pointsA; // descending by points
+      }
+      int gdA = a['goalDifference'];
+      int gdB = b['goalDifference'];
+      return gdB - gdA; // descending by goalDifference
+    });
+
+    return list;
+  }
+
+  /// Extracts the top 3 contingents (if available) and maps them to
+  /// [ { "contingentId": X, "medal": "gold", "points": goldMedalPoints }, ... ]
+  List<Map<String, dynamic>> _getTopThreeContingents(
+    List<Map<String, dynamic>> sortedStandings,
+    int goldPoints,
+    int silverPoints,
+    int bronzePoints,
+  ) {
+    List<Map<String, dynamic>> medalWinners = [];
+
+    if (sortedStandings.isNotEmpty) {
+      medalWinners.add({
+        'contingentId': sortedStandings[0]['contingentId'],
+        'medal': 'gold',
+        'points': goldPoints,
+      });
+    }
+    if (sortedStandings.length > 1) {
+      medalWinners.add({
+        'contingentId': sortedStandings[1]['contingentId'],
+        'medal': 'silver',
+        'points': silverPoints,
+      });
+    }
+    if (sortedStandings.length > 2) {
+      medalWinners.add({
+        'contingentId': sortedStandings[2]['contingentId'],
+        'medal': 'bronze',
+        'points': bronzePoints,
+      });
+    }
+
+    return medalWinners;
+  }
+
+  /// Builds a Firestore update map that increments:
+  ///   standings.<contingentId>.<medal> by 1  (e.g. gold, silver, bronze)
+  ///   standings.<contingentId>.points by [medalPoints]
+  Map<String, dynamic> _buildMedalsUpdateMap(
+      List<Map<String, dynamic>> medalWinners) {
+    Map<String, dynamic> updateMap = {};
+    for (var winner in medalWinners) {
+      String contId = winner['contingentId'];
+      String medal = winner['medal'];
+      int medalPoints = winner['points'];
+
+      // e.g. "standings.ContingentA.gold" => FieldValue.increment(1)
+      // e.g. "standings.ContingentA.points" => FieldValue.increment(medalPoints)
+      updateMap['standings.$contId.$medal'] = FieldValue.increment(1);
+      updateMap['standings.$contId.points'] = FieldValue.increment(medalPoints);
+    }
+    return updateMap;
+  }
+
   /// Streams all matches for [tournamentId], sorted by statusPriority (0 -> 1 -> 2).
   Stream<QuerySnapshot<Map<String, dynamic>>> getMatchesForTournament(
       String tournamentId) {
