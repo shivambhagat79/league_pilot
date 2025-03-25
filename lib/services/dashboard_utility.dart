@@ -1,45 +1,34 @@
 import '../models/tournament.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import '../models/match.dart';
 
 // Saaransh
 // changed the classname from TournamentService to DashboardService
 class DashboardService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Future<List<String>> getRecentMatchIdsFromTournament(
-      String tournamentId) async {
+  Future<List<Match>> getRecentMatches(String tournamentId) async {
     try {
-      // Retrieve the tournament document by its ID
-      DocumentSnapshot snapshot =
-          await _firestore.collection('tournaments').doc(tournamentId).get();
+      // Query matches for the given tournament, order by schedule.date descending
+      // and limit to 5.
+      QuerySnapshot snapshot = await _firestore
+          .collection('matches')
+          .where('tournament', isEqualTo: tournamentId)
+          .orderBy('schedule.date', descending: true)
+          .limit(5)
+          .get();
 
-      if (!snapshot.exists) {
-        return [];
-      }
+      // Convert each document into a Match object
+      List<Match> matches = snapshot.docs.map((doc) {
+        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
 
-      // Convert the document data to a Map
-      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-
-      // Extract the matchIds list (ensure it's a List<String>)
-      List<String> matchIds = List<String>.from(data['matchIds'] ?? []);
-      int totalMatches = matchIds.length;
-
-      if (totalMatches == 0) return [];
-
-      // Determine the starting index for the last 5 entries
-      int startIndex = totalMatches >= 5 ? totalMatches - 5 : 0;
-
-      // Retrieve the last 5 (or fewer) match IDs
-      List<String> recentMatches = matchIds.sublist(startIndex, totalMatches);
-
-      // Reverse the list so that the most recent match comes first
-      return recentMatches.reversed.toList();
+      return matches;
     } catch (e) {
-      print("Error retrieving recent match IDs: $e");
+      print('Error retrieving recent matches: $e');
       return [];
     }
   }
-
   //Saaransh
 
   // Future<List<String>> getImagesDashboard(String tournamentId) async {
