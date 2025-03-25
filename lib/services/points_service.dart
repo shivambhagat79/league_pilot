@@ -44,6 +44,11 @@ class PointsService {
       await _incrementField(tournamentId, sportDocId, contingentA, 'losses', 1);
       await _incrementField(
           tournamentId, sportDocId, contingentA, 'points', losePoints);
+      //increase the matches of teams by one   
+     await _incrementField(
+          tournamentId, sportDocId, contingentA, 'matchesPlayed', 1);
+      await _incrementField(
+          tournamentId, sportDocId, contingentB, 'matchesPlayed', 1);     
     }
 
     // Update goalDifference
