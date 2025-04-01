@@ -17,7 +17,8 @@ class Match {
       status; // For backend use, e.g., "upcoming", "running", "previous"
   final String
       verdict; // Outcome of the match (e.g., winning team ID, tie, etc.)
-  final int statusPriority ;    
+  final int statusPriority ; 
+  final String scorekeeperEmail; // Email of the user who is the scorekeeper for this match   
 
   Match({
     required this.tournament,
@@ -32,6 +33,7 @@ class Match {
     required this.status,
     required this.verdict,
     required this.statusPriority,
+    required this.scorekeeperEmail,
   });
 
   // Factory constructor to create a Match instance from a map (e.g., from Firestore)
@@ -51,6 +53,7 @@ class Match {
       status: map['status'] ?? '',
       verdict: map['verdict'] ?? '',
       statusPriority: map['statusPriority'] ?? 0,
+      scorekeeperEmail: map['scorekeeperEmail'] ?? '',
     );
   }
 
@@ -69,6 +72,7 @@ class Match {
       'status': status,
       'verdict': verdict,
       'statusPriority': statusPriority,
+      'scorekeeperEmail': scorekeeperEmail,
     };
   }
 }

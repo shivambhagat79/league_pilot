@@ -33,6 +33,7 @@ class MatchService {
     required DateTime date,
     required TimeOfDay startTime,
     required TimeOfDay endTime,
+    required String scorekeeperEmail,
   }) async {
     try {
       // Build the Schedule object with the updated fields.
@@ -75,6 +76,7 @@ class MatchService {
         status: status,
         verdict: verdict,
         statusPriority: statusPriority,
+        scorekeeperEmail: scorekeeperEmail,
       );
 
       // Create a new document in the 'matches' collection
