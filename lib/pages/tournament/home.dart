@@ -28,9 +28,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     pages = <Widget>[
-      const Dashboard(),
+      Dashboard(
+        tournamentId: widget.tournamentId,
+      ),
       Matches(tournamentId: widget.tournamentId),
-      const PointsTable(),
+      PointsTable(
+        tournamentId: widget.tournamentId,
+      ),
       const Teams(),
     ];
     super.initState();

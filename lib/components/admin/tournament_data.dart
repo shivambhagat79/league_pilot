@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/services/tournament_service.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:hunger_games/utils/url_launchers.dart';
 
 class TournamentData extends StatefulWidget {
   final String tournamentId;
@@ -36,30 +36,6 @@ class _TournamentDataState extends State<TournamentData> {
       _tournamentData = data;
       _isLoading = false;
     });
-  }
-
-  Future<void> _phoneLauncher(String phoneNumber) async {
-    phoneNumber = "+91$phoneNumber";
-
-    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    } else {
-      throw 'Could not launch $phoneUri';
-    }
-  }
-
-  Future<void> _emailLauncher(String email) async {
-    // phoneNumber = "+91$phoneNumber";
-
-    final Uri emailUri = Uri(scheme: 'mailto', path: email);
-
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
-    } else {
-      throw 'Could not launch $emailUri';
-    }
   }
 
   @override
@@ -169,7 +145,7 @@ class _TournamentDataState extends State<TournamentData> {
                         DataCell(
                           GestureDetector(
                             onTap: () {
-                              _phoneLauncher(_tournamentData["organiser"]);
+                              phoneLauncher(_tournamentData["organiser"]);
                             },
                             child: Text(
                               _tournamentData["organiser"],
@@ -190,7 +166,7 @@ class _TournamentDataState extends State<TournamentData> {
                         DataCell(
                           GestureDetector(
                             onTap: () {
-                              _phoneLauncher(_tournamentData["medical"]);
+                              phoneLauncher(_tournamentData["medical"]);
                             },
                             child: Text(
                               _tournamentData["medical"],
@@ -211,7 +187,7 @@ class _TournamentDataState extends State<TournamentData> {
                         DataCell(
                           GestureDetector(
                             onTap: () {
-                              _phoneLauncher(_tournamentData["security"]);
+                              phoneLauncher(_tournamentData["security"]);
                             },
                             child: Text(
                               _tournamentData["security"],
@@ -232,7 +208,7 @@ class _TournamentDataState extends State<TournamentData> {
                         DataCell(
                           GestureDetector(
                             onTap: () {
-                              _emailLauncher(_tournamentData["organiserEmail"]);
+                              emailLauncher(_tournamentData["organiserEmail"]);
                             },
                             child: Text(
                               _tournamentData["organiserEmail"],

@@ -6,7 +6,10 @@ import 'package:latlong2/latlong.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class DashboardMap extends StatefulWidget {
-  const DashboardMap({super.key});
+  final double latitude;
+  final double longitude;
+  const DashboardMap(
+      {super.key, required this.latitude, required this.longitude});
 
   @override
   State<DashboardMap> createState() => _DashboardMapState();
@@ -35,7 +38,7 @@ class _DashboardMapState extends State<DashboardMap> {
         borderRadius: BorderRadius.circular(20.0),
         child: FlutterMap(
           options: MapOptions(
-            initialCenter: LatLng(30.968826233399174, 76.47331329133168),
+            initialCenter: LatLng(widget.latitude, widget.longitude),
             initialZoom: 14.8,
             minZoom: 14,
             maxZoom: 16.8,
@@ -46,8 +49,8 @@ class _DashboardMapState extends State<DashboardMap> {
             ),
             MarkerLayer(markers: [
               customMarker(
-                "Football Ground",
-                LatLng(30.963086043184678, 76.47551895868489),
+                "Main Campus",
+                LatLng(widget.latitude, widget.longitude),
               ),
             ])
           ],

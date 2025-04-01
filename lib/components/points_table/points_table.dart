@@ -4,7 +4,8 @@ import 'package:hunger_games/components/points_table/sports_tables_container.dar
 import 'package:hunger_games/components/points_table/tournament_table.dart';
 
 class PointsTable extends StatefulWidget {
-  const PointsTable({super.key});
+  final String tournamentId;
+  const PointsTable({super.key, required this.tournamentId});
 
   @override
   State<PointsTable> createState() => _PointsTableState();
@@ -17,7 +18,7 @@ class _PointsTableState extends State<PointsTable> {
       title: "Points Table",
       child: Column(
         children: [
-          TournamentTable(),
+          TournamentTable(tournamentId: widget.tournamentId),
           SportsTablesContainer(),
         ],
       ),

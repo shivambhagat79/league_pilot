@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TournamentTable extends StatefulWidget {
-  const TournamentTable({super.key});
+  final String tournamentId;
+  const TournamentTable({super.key, required this.tournamentId});
 
   @override
   State<TournamentTable> createState() => _TournamentTableState();
@@ -77,40 +78,41 @@ class _TournamentTableState extends State<TournamentTable> {
                   label: Text("Points"),
                 ),
               ],
-              rows: [
-                DataRow(cells: [
-                  DataCell(Text("1")),
-                  DataCell(Text("IIT Ropar")),
-                  DataCell(Text("10")),
-                  DataCell(Text("3")),
-                  DataCell(Text("4")),
-                  DataCell(Text("430")),
-                ]),
-                DataRow(cells: [
-                  DataCell(Text("2")),
-                  DataCell(Text("IIT Kanpur")),
-                  DataCell(Text("4")),
-                  DataCell(Text("2")),
-                  DataCell(Text("3")),
-                  DataCell(Text("200")),
-                ]),
-                DataRow(cells: [
-                  DataCell(Text("3")),
-                  DataCell(Text("IIT Mandi")),
-                  DataCell(Text("2")),
-                  DataCell(Text("1")),
-                  DataCell(Text("3")),
-                  DataCell(Text("120")),
-                ]),
-                DataRow(cells: [
-                  DataCell(Text("4")),
-                  DataCell(Text("Chitkara University")),
-                  DataCell(Text("0")),
-                  DataCell(Text("2")),
-                  DataCell(Text("1")),
-                  DataCell(Text("40")),
-                ]),
-              ],
+              rows: [],
+              // rows: [
+              //   DataRow(cells: [
+              //     DataCell(Text("1")),
+              //     DataCell(Text("IIT Ropar")),
+              //     DataCell(Text("10")),
+              //     DataCell(Text("3")),
+              //     DataCell(Text("4")),
+              //     DataCell(Text("430")),
+              //   ]),
+              //   DataRow(cells: [
+              //     DataCell(Text("2")),
+              //     DataCell(Text("IIT Kanpur")),
+              //     DataCell(Text("4")),
+              //     DataCell(Text("2")),
+              //     DataCell(Text("3")),
+              //     DataCell(Text("200")),
+              //   ]),
+              //   DataRow(cells: [
+              //     DataCell(Text("3")),
+              //     DataCell(Text("IIT Mandi")),
+              //     DataCell(Text("2")),
+              //     DataCell(Text("1")),
+              //     DataCell(Text("3")),
+              //     DataCell(Text("120")),
+              //   ]),
+              //   DataRow(cells: [
+              //     DataCell(Text("4")),
+              //     DataCell(Text("Chitkara University")),
+              //     DataCell(Text("0")),
+              //     DataCell(Text("2")),
+              //     DataCell(Text("1")),
+              //     DataCell(Text("40")),
+              //   ]),
+              // ],
             ),
           ),
         ],
