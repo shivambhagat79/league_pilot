@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/player.dart'; // Player model
 import '../models/admin.dart'; // Admin model
+import '../models/scorekeeper.dart'; // Scorekeeper model
 
 class AuthResult {
   final String? uid;
@@ -199,6 +200,86 @@ Future<AuthResult> signInAdmin(String email, String password) async {
       return [null, e.toString()];
     }
   }
+   /// Signs in a scorekeeper using Firebase Auth.
+  /// Then verifies that the UID exists in the 'scorekeepers' collection.
+  Future<AuthResult> signInScorekeeper(String email, String password) async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      User? user = result.user;
+      if (user == null) {
+        return AuthResult(uid: null, message: "Sign in failed");
+      }
+      DocumentSnapshot doc = await _firestore.collection('scorekeepers').doc(user.uid).get();
+      if (!doc.exists) {
+        return AuthResult(
+            uid: null,
+            message: "Invalid credentials: account not found in scorekeeper portal");
+      }
+      return AuthResult(uid: user.uid, message: "Scorekeeper sign in successful");
+    } on FirebaseAuthException catch (e) {
+      return AuthResult(uid: null, message: e.message ?? "Sign in failed");
+    } catch (e) {
+      return AuthResult(uid: null, message: e.toString());
+    }
+  }
+
+  /// Signs up a scorekeeper with email and password.
+  /// It creates a Scorekeeper instance and saves it under the 'scorekeepers' collection.
+  Future<AuthResult> signupScorekeeper({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User? user = result.user;
+      if (user == null) {
+        return AuthResult(uid: null, message: "Registration failed");
+      }
+      // Create Scorekeeper instance.
+      Scorekeeper newScorekeeper = Scorekeeper(
+        id: user.uid,
+        email: email,
+        password: password,
+      );
+      await _firestore.collection('scorekeepers').doc(user.uid).set(newScorekeeper.toMap());
+      return AuthResult(uid: user.uid, message: "Scorekeeper registration successful");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        return AuthResult(uid: null, message: "The email is already in use");
+      }
+      return AuthResult(uid: null, message: e.message ?? "Registration failed");
+    } catch (e) {
+      return AuthResult(uid: null, message: e.toString());
+    }
+  }
+
+  /// Caller function for registering a scorekeeper.
+  /// Returns a List with [uid, message].
+  Future<List<String?>> registerScorekeeper({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      AuthResult result = await signupScorekeeper(email: email, password: password);
+      return [result.uid, result.message];
+    } catch (e) {
+      return [null, e.toString()];
+    }
+  }
+
+  /// Caller function for logging in a scorekeeper.
+  /// Returns a List with [uid, message].
+  Future<List<String?>> loginScorekeeper(String email, String password) async {
+    try {
+      AuthResult result = await signInScorekeeper(email, password);
+      return [result.uid, result.message];
+    } catch (e) {
+      return [null, e.toString()];
+    }
+  }
+
   // Sign out
   Future<AuthResult> signOut() async {
     try {
