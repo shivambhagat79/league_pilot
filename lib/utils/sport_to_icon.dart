@@ -9,5 +9,6 @@ Map<String, IconData> sportToIcon = {
   "Hockey": Icons.sports_hockey,
   "Lawn Tennis": Icons.sports_tennis,
   "Chess": Icons.border_all_rounded,
+  "Lawn_tennis": Icons.sports_tennis,
   "All": Icons.sports,
 };

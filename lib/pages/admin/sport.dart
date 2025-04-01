@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
+import 'package:hunger_games/services/match_service.dart';
 
 class SportPage extends StatefulWidget {
   final String sport;
@@ -11,6 +12,7 @@ class SportPage extends StatefulWidget {
 }
 
 class _SportPageState extends State<SportPage> {
+  final MatchService _matchService = MatchService();
   final List<String> _teams = [];
   @override
   Widget build(BuildContext context) {
@@ -165,7 +167,26 @@ class _SportPageState extends State<SportPage> {
                               "Are you sure you want to end this sport?\nMedals will be awarded and locked after this action."),
                           actions: [
                             FilledButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                bool success = await _matchService.endSport(
+                                  tournamentId: widget.tournamentId,
+                                  sportName: widget.sport,
+                                );
+
+                                if (success) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Sport ended successfully"),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Failed to end sport"),
+                                    ),
+                                  );
+                                }
+
                                 Navigator.of(context).pop();
                               },
                               child: Text("End"),

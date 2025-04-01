@@ -43,12 +43,12 @@ class PointsService {
       await _incrementField(tournamentId, sportDocId, contingentA, 'losses', 1);
       await _incrementField(
           tournamentId, sportDocId, contingentA, 'points', losePoints);
-      //increase the matches of teams by one   
-     await _incrementField(
-          tournamentId, sportDocId, contingentA, 'matchesPlayed', 1);
-      await _incrementField(
-          tournamentId, sportDocId, contingentB, 'matchesPlayed', 1);     
+      //increase the matches of teams by one
     }
+    await _incrementField(
+        tournamentId, sportDocId, contingentA, 'matchesPlayed', 1);
+    await _incrementField(
+        tournamentId, sportDocId, contingentB, 'matchesPlayed', 1);
 
     // Update goalDifference
     int goalDiffA = scoreA - scoreB;
@@ -161,7 +161,8 @@ class PointsService {
       return allSports;
     });
   }
-   Stream<List<Map<String, dynamic>>> streamGeneralTable(String tournamentId) {
+
+  Stream<List<Map<String, dynamic>>> streamGeneralTable(String tournamentId) {
     return _firestore
         .collection('tournaments')
         .doc(tournamentId)
@@ -185,6 +186,7 @@ class PointsService {
         int gold = stats['gold'] ?? 0;
         int silver = stats['silver'] ?? 0;
         int bronze = stats['bronze'] ?? 0;
+        int points = stats['points'] ?? 0;
 
         // We won't filter anyone out here; all contingents are included
         list.add({
@@ -192,6 +194,7 @@ class PointsService {
           'gold': gold,
           'silver': silver,
           'bronze': bronze,
+          'points': points,
         });
       });
 

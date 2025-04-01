@@ -136,8 +136,8 @@ class MatchService {
       Map<String, dynamic> teamScores =
           Map<String, dynamic>.from(scoreboard['teamScores'] ?? {});
 
-      // e.g., 3 for a win, 0 for a loss, 1 for a draw (or fetch from Tournament doc)
-      int winPoints = matchData['winPoints'] ?? 3;
+      // e.g., 2 for a win, 0 for a loss, 1 for a draw (or fetch from Tournament doc)
+      int winPoints = matchData['winPoints'] ?? 2;
       int losePoints = matchData['losePoints'] ?? 0;
       int drawPoints = matchData['drawPoints'] ?? 1;
 
@@ -155,9 +155,9 @@ class MatchService {
       // Step C: Determine winner/draw
       String verdict;
       if (scoreA > scoreB) {
-        verdict = contingentA; // the winner is ContingentA
+        verdict = "$contingentA won"; // the winner is ContingentA
       } else if (scoreB > scoreA) {
-        verdict = contingentB; // the winner is ContingentB
+        verdict = "$contingentB won"; // the winner is ContingentB
       } else {
         verdict = "draw";
       }
@@ -165,7 +165,7 @@ class MatchService {
       // Step D: Update match doc with verdict and status
       await _firestore.collection('matches').doc(matchId).update({
         'verdict': verdict,
-        'status': 'ended',
+        'status': 'results',
         'statusPriority': 2,
       });
 
@@ -210,7 +210,7 @@ class MatchService {
     Map<String, dynamic> teamData = teamDoc.data() as Map<String, dynamic>;
 
     // Return the contingent ID (or name) from that doc
-    return teamData['contingentId'] ?? "UnknownContingent";
+    return teamData['contingentName'] ?? "UnknownContingent";
   }
 
   /// Ends the specified sport by:
@@ -438,19 +438,14 @@ class MatchService {
     }
   }
 
-
-  Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMatchesForScorekeeper(
+      String scorekeeperEmail) {
     return _firestore
         .collection('matches')
         .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
         .orderBy('statusPriority')
-        .snapshots()
-        .map((query) {
-      return query.docs.map((doc) {
-        // Make sure Match.fromMap can handle doc.id if needed
-        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+        .snapshots();
+  }
 
   Future<bool> deleteMatch(String matchId) async {
     try {
@@ -460,6 +455,5 @@ class MatchService {
       print('Error deleting match: $e');
       return false; // Indicate failure
     }
-
   }
 }

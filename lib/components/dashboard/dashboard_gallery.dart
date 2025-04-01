@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:hunger_games/pages/tournament/gallery.dart';
+// import 'package:hunger_games/pages/tournament/gallery.dart';
 import 'package:hunger_games/utils/gallery_utils.dart';
 
 class DashboardGallery extends StatefulWidget {
@@ -53,12 +53,12 @@ class _DashboardGalleryState extends State<DashboardGallery> {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Gallery(),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => Gallery(),
+                //   ),
+                // );
               },
             ),
           ),

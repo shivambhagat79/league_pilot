@@ -1,11 +1,10 @@
 // changed the classname from TournamentService to DashboardService
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:math';
-import '../models/match.dart';
 
 class DashboardService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Future<List<Match>> getRecentMatches(String tournamentId) async {
+  Future<List<Map<String, dynamic>>> getRecentMatches(
+      String tournamentId) async {
     try {
       // Query matches for the given tournament, order by schedule.date descending
       // and limit to 5.
@@ -16,12 +15,15 @@ class DashboardService {
           .limit(5)
           .get();
 
-      // Convert each document into a Match object
-      List<Match> matches = snapshot.docs.map((doc) {
-        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      if (snapshot.docs.isEmpty) {
+        return []; // Return an empty list if no matches are found
+      }
+
+      List<Map<String, dynamic>> recentMatches = snapshot.docs.map((doc) {
+        return doc.data() as Map<String, dynamic>;
       }).toList();
 
-      return matches;
+      return recentMatches;
     } catch (e) {
       print('Error retrieving recent matches: $e');
       return [];
