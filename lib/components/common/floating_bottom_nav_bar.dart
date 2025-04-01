@@ -15,14 +15,13 @@ class _FloatingBottomNavBarState extends State<FloatingBottomNavBar> {
     Icons.home,
     Icons.sports_cricket,
     Icons.scoreboard,
-    Icons.calendar_month,
     Icons.group
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onSurfaceVariant,

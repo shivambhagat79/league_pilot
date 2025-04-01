@@ -20,6 +20,7 @@ class TournamentService {
     required String security,
     required String medical,
     required String organiser,
+    required String organiserEmail,
   }) async {
     try {
       // 2. Convert medal points strings to integers
@@ -54,6 +55,7 @@ class TournamentService {
         security: security,
         medical: medical,
         organiser: organiser,
+        organiserEmail: organiserEmail,
       );
 
       // 6. Create a new document in 'tournaments' collection
@@ -62,11 +64,69 @@ class TournamentService {
       // 7. Save the tournament data to Firestore
       await docRef.set(newTournament.toMap());
 
+      // initialize the points table for the tournament
+      await initializePointsTables(
+        tournamentId: docRef.id,
+        contingents: contingents,
+        sports: sports,
+      );
       // 8. Return the generated document ID
       return docRef.id;
     } catch (e) {
       print("Error creating tournament: $e");
       return null;
+    }
+  }
+
+  Future<void> initializePointsTables({
+    required String tournamentId,
+    required List<String> contingents,
+    required List<String> sports,
+  }) async {
+    // 1) Initialize the "general" doc with 0 medals for each contingent
+    Map<String, dynamic> generalStandings = {};
+    for (var contingent in contingents) {
+      generalStandings[contingent] = {
+        "gold": 0,
+        "silver": 0,
+        "bronze": 0,
+        "points": 0, // total points from medals
+      };
+    }
+
+    await _firestore
+        .collection('tournaments')
+        .doc(tournamentId)
+        .collection('pointsTables')
+        .doc('general')
+        .set({
+      "standings": generalStandings,
+    });
+
+    // 2) For each sport, create a doc with W/L/draw for each contingent
+    for (var sport in sports) {
+      Map<String, dynamic> sportStandings = {};
+      for (var contingent in contingents) {
+        sportStandings[contingent] = {
+          "matchesPlayed": 0,
+          "wins": 0,
+          "losses": 0,
+          "draws": 0,
+          "points": 0, // total points for that sport
+        };
+      }
+
+      // Example doc ID: "sport_football"
+      String docId = "sport_$sport".replaceAll(' ', '_').toLowerCase();
+
+      await _firestore
+          .collection('tournaments')
+          .doc(tournamentId)
+          .collection('pointsTables')
+          .doc(docId)
+          .set({
+        "standings": sportStandings,
+      });
     }
   }
 
@@ -92,6 +152,27 @@ class TournamentService {
     } catch (e) {
       print("Error retrieving active tournaments: $e");
       return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> getTournamentById(String tournamentId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        // If the document doesn't exist, return an empty map.
+        return {};
+      }
+
+      // Convert document data to a Map
+      Map<String, dynamic> tournamentData =
+          snapshot.data() as Map<String, dynamic>;
+
+      return tournamentData;
+    } catch (e) {
+      print("Error retrieving tournament with ID $tournamentId: $e");
+      return {};
     }
   }
 
@@ -163,6 +244,105 @@ class TournamentService {
     } catch (e) {
       print("Error retrieving tournaments for admin $adminEmail: $e");
       return [];
+    }
+  }
+
+  //Saaransh
+  Future<bool> addSportToTournament(String tournamentId, String sport) async {
+  try {
+    // Fetch the tournament document.
+    DocumentSnapshot snapshot =
+        await _firestore.collection('tournaments').doc(tournamentId).get();
+
+    if (!snapshot.exists) {
+      return false;
+    }
+
+    // Cast the snapshot data to a Map.
+    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+    // Retrieve the current list of sports.
+    List<String> sports = List<String>.from(data['sports'] ?? []);
+
+    // Check if the sport is already in the list.
+    if (!sports.contains(sport)) {
+      sports.add(sport);
+      // Update Firestore with the new sports list.
+      await _firestore.collection('tournaments').doc(tournamentId).update({
+        'sports': sports,
+      });
+    }
+
+    // Create a new points table for the sport.
+    // Build a document ID based on the sport name, e.g., "sport_football"
+    String sportDocId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
+
+    // Retrieve the list of contingents from the tournament document.
+    List<String> contingents = List<String>.from(data['contingents'] ?? []);
+
+    // Initialize the standings map with each contingent having default values.
+    Map<String, dynamic> standings = {};
+    for (var contingent in contingents) {
+      standings[contingent] = {
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "points": 0,
+        "goalDifference": 0,
+        "matchesPlayed": 0,
+      };
+    }
+
+    // Create the points table document in the 'pointsTables' sub-collection.
+    await _firestore
+        .collection('tournaments')
+        .doc(tournamentId)
+        .collection('pointsTables')
+        .doc(sportDocId)
+        .set({
+      "standings": standings,
+    });
+
+    return true;
+  } catch (e) {
+    print("Error adding sport $sport to Tournament with Id $tournamentId: $e");
+    return false;
+  }
+}
+  //Saaransh
+  Future<bool> removeSportFromTournament(
+      String tournamentId, String sport) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (!snapshot.exists) {
+        return false;
+      }
+
+      // Cast the snapshot data to a Map
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // Retrieve the current list of sports
+      List<String> sports = List<String>.from(data['sports'] ?? []);
+
+      // Check if the sport exists in the list
+      if (sports.contains(sport)) {
+        sports.remove(sport);
+
+        // Update Firestore with the modified list
+        await _firestore.collection('tournaments').doc(tournamentId).update({
+          'sports': sports,
+        });
+
+        return true; // Sport successfully removed
+      }
+
+      return false; // Sport was not in the list
+    } catch (e) {
+      print(
+          "Error removing sport $sport from Tournament with Id $tournamentId: $e");
+      return false;
     }
   }
 }

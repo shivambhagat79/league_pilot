@@ -118,6 +118,38 @@ class _AdminPageState extends State<AdminPage> {
                                   ),
                                 );
                               },
+                              trailing: PopupMenuButton(
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    child: ListTile(
+                                      title: Text('End Tournament'),
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text('End Tournament?'),
+                                            content: Text(
+                                                'Are you sure you want to end this tournament?'),
+                                            actions: [
+                                              FilledButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  getActiveTournaments();
+                                                },
+                                                child: Text('Yes'),
+                                              ),
+                                              OutlinedButton(
+                                                onPressed: () {},
+                                                child: Text('No'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

@@ -11,18 +11,19 @@ class Tournament {
   final List<String> contingents; // List of contingent IDs
   // final List<String> matchIds; // List of match IDs
   // final PointDistribution pointDistribution;
-  final int goldMedalPoints ;
+  final int goldMedalPoints;
   final int silverMedalPoints;
-  final int bronzeMedalPoints ;
+  final int bronzeMedalPoints;
   final List<String> pictureUrls; // For tournament gallery
   final String status; // Tournament status
   //final GeoPoint hostingInstituteLocation; // Location of the hosting institute
-  //final List<GeoPoint> venueCoordinates;  
-  final double latitude ;
-  final double longitude ;
-  final  String security; //security no. of the tournament
+  //final List<GeoPoint> venueCoordinates;
+  final double latitude;
+  final double longitude;
+  final String security; //security no. of the tournament
   final String medical; //medical no. of the tournament
   final String organiser; //organiser no. of the tournament
+  final String organiserEmail; //organiser email of the tournament
   Tournament({
     required this.name,
     required this.hostInstitute,
@@ -38,13 +39,14 @@ class Tournament {
     required this.bronzeMedalPoints,
     required this.pictureUrls,
     required this.status,
-   // required this.hostingInstituteLocation,
+    // required this.hostingInstituteLocation,
     //required this.venueCoordinates,
     required this.latitude,
     required this.longitude,
     required this.security,
     required this.medical,
     required this.organiser,
+    required this.organiserEmail,
   });
 
   // Creates a Tournament instance from a map (e.g., from Firestore)
@@ -67,7 +69,7 @@ class Tournament {
       //: PointDistribution(winPoints: 0, lossPoints: 0, drawPoints: 0),
       pictureUrls: List<String>.from(map['pictureUrls'] ?? []),
       status: map['status'] ?? '',
-      
+
       goldMedalPoints: map['goldMedalPoints'] ?? 0,
       silverMedalPoints: map['silverMedalPoints'] ?? 0,
       bronzeMedalPoints: map['bronzeMedalPoints'] ?? 0,
@@ -76,6 +78,7 @@ class Tournament {
       security: map['security'] ?? '',
       medical: map['medical'] ?? '',
       organiser: map['organiser'] ?? '',
+      organiserEmail: map['organiserEmail'] ?? '',
     );
   }
 
@@ -96,11 +99,12 @@ class Tournament {
       'latitude': latitude,
       'longitude': longitude,
       'goldMedalPoints': goldMedalPoints,
-      'silverMedalPoints': silverMedalPoints, 
+      'silverMedalPoints': silverMedalPoints,
       'bronzeMedalPoints': bronzeMedalPoints,
       'security': security,
       'medical': medical,
       'organiser': organiser,
+      'organiserEmail': organiserEmail,
     };
   }
 }

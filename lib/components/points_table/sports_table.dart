@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/utils/sport_to_icon.dart';
 
 class SportsTable extends StatefulWidget {
-  const SportsTable({super.key});
+  final String sport;
+  final List<Map<String, dynamic>> standings;
+  const SportsTable({super.key, required this.sport, required this.standings});
 
   @override
   State<SportsTable> createState() => _SportsTableState();
@@ -24,11 +27,12 @@ class _SportsTableState extends State<SportsTable> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.sports_soccer),
+              Icon(sportToIcon[
+                  widget.sport[0].toUpperCase() + widget.sport.substring(1)]),
               Padding(
                 padding: const EdgeInsets.only(top: 8, left: 8),
                 child: Text(
-                  "Football",
+                  widget.sport.replaceAll('_', ' '),
                   style: TextStyle(
                     fontWeight: FontWeight.w200,
                     fontSize: 20,
@@ -67,36 +71,18 @@ class _SportsTableState extends State<SportsTable> {
                   label: Text("Points"),
                 ),
               ],
-              rows: [
-                DataRow(
-                  cells: [
-                    DataCell(Text("1")),
-                    DataCell(Text("IIT Ropar")),
-                    DataCell(Text("100")),
-                  ],
-                ),
-                DataRow(
-                  cells: [
-                    DataCell(Text("2")),
-                    DataCell(Text("IIT Kanpur")),
-                    DataCell(Text("90")),
-                  ],
-                ),
-                DataRow(
-                  cells: [
-                    DataCell(Text("3")),
-                    DataCell(Text("IIT Mandi")),
-                    DataCell(Text("80")),
-                  ],
-                ),
-                DataRow(
-                  cells: [
-                    DataCell(Text("4")),
-                    DataCell(Text("Chitkara University")),
-                    DataCell(Text("70")),
-                  ],
-                ),
-              ],
+              rows: widget.standings
+                  .map(
+                    (team) => DataRow(
+                      cells: [
+                        DataCell(Text(
+                            (widget.standings.indexOf(team) + 1).toString())),
+                        DataCell(Text(team['contingentId'])),
+                        DataCell(Text(team['points'].toString())),
+                      ],
+                    ),
+                  )
+                  .toList(),
             ),
           ),
         ],

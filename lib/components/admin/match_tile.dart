@@ -153,7 +153,7 @@ class _MatchTileState extends State<MatchTile> {
                             return AlertDialog(
                               title: Text('End Match'),
                               content: Text(
-                                  'Are you sure you want to start the match?\nThe scores will be locked and cannot be updated after this action.'),
+                                  'Are you sure you want to end the match?\nThe scores will be locked and cannot be updated after this action.'),
                               actions: [
                                 FilledButton(
                                   onPressed: () async {

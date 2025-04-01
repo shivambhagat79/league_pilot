@@ -101,6 +101,7 @@ class _CreateTournamentPageState extends State<CreateTournamentPage> {
         security: _securityContactController.text,
         medical: _medicContactController.text,
         organiser: _organisingTeamContactController.text,
+        organiserEmail: _organisingTeamEmailController.text,
       );
 
       if (tournamentId != null) {

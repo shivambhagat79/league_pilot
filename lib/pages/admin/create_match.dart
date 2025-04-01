@@ -31,6 +31,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
   final _winController = TextEditingController();
   final _lossController = TextEditingController();
   final _drawController = TextEditingController();
+  final _scorekeeperController = TextEditingController();
   bool _isLoading = false;
 
   Future<void> setDate() async {
@@ -104,6 +105,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
         date: _date ?? DateTime.now(),
         startTime: _startTime ?? TimeOfDay.now(),
         endTime: _endTime ?? TimeOfDay.now(),
+        scorekeeperEmail: _scorekeeperController.text,
       );
 
       if (matchId != null) {
@@ -470,6 +472,36 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                           ],
                         ),
                       ],
+                    ),
+                    Divider(height: 40, thickness: 1),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        'Enter Email of the Scorekeeper',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                    TextFormField(
+                      controller: _scorekeeperController,
+                      decoration: InputDecoration(
+                        labelText: 'Scorekeeper Email',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (!RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value!)) {
+                          return "Please enter a valid email";
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: 30),
                     FilledButton(
