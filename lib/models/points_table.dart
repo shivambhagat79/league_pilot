@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 /// Represents a single points table (e.g., "general" or "sport_football").
 /// 'standings' is a map of contingent -> map of stats.
 class PointsTable {

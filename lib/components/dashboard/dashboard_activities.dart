@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:hunger_games/components/common/heading_cut_card.dart';
 
-class DashboardActivities extends StatelessWidget {
-  const DashboardActivities({super.key});
+class DashboardActivities extends StatefulWidget {
+  final String tournamentId;
+  const DashboardActivities({super.key, required this.tournamentId});
 
+  @override
+  State<DashboardActivities> createState() => _DashboardActivitiesState();
+}
+
+class _DashboardActivitiesState extends State<DashboardActivities> {
   @override
   Widget build(BuildContext context) {
     return HeadingCutCard(
