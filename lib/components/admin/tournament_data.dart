@@ -21,6 +21,9 @@ class _TournamentDataState extends State<TournamentData> {
     decoration: TextDecoration.underline,
   );
 
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _urlController = TextEditingController();
+
   late Map<String, dynamic> _tournamentData;
   bool _isLoading = false;
 
@@ -277,7 +280,51 @@ class _TournamentDataState extends State<TournamentData> {
                         DataCell(
                           OutlinedButton(
                             child: Text("Add Images"),
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("Add Image URL"),
+                                      content: Form(
+                                        key: _formKey,
+                                        child: TextFormField(
+                                          controller: _urlController,
+                                          decoration: InputDecoration(
+                                            labelText: "Image URL",
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please enter a URL";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      actions: [
+                                        FilledButton(
+                                          onPressed: () {
+                                            if (_formKey.currentState!
+                                                .validate()) {}
+                                            // Navigator.of(context).pop();
+                                          },
+                                          child: Text("Add"),
+                                        ),
+                                        OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("Close"),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
                           ),
                         ),
                       ],
