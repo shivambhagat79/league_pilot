@@ -442,4 +442,18 @@ class MatchService {
       return false;
     }
   }
+
+  Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
+    return _firestore
+        .collection('matches')
+        .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
+        .orderBy('statusPriority')
+        .snapshots()
+        .map((query) {
+      return query.docs.map((doc) {
+        // Make sure Match.fromMap can handle doc.id if needed
+        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 }
