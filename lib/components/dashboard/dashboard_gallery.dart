@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hunger_games/pages/tournament/gallery.dart';
 // import 'package:hunger_games/pages/tournament/gallery.dart';
 import 'package:hunger_games/utils/gallery_utils.dart';
 
@@ -53,12 +55,14 @@ class _DashboardGalleryState extends State<DashboardGallery> {
                 ),
               ),
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => Gallery(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Gallery(
+                      imageUrls: widget.imageUrls,
+                    ),
+                  ),
+                );
               },
             ),
           ),
@@ -72,27 +76,24 @@ class _DashboardGalleryState extends State<DashboardGallery> {
                           margin: EdgeInsets.only(left: 10),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              formatImageUrl(url),
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white60,
-                                  ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(Icons.error);
-                              },
+                            child: CachedNetworkImage(
+                              imageUrl: (formatImageUrl(url)),
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white60,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                Icons.error,
+                                color: Colors.white60,
+                              ),
                               fit: BoxFit.cover,
                             ),
                           ),
                         );
                       })
                       .toList()
-                      .sublist(0, min(widget.imageUrls.length, 8)),
+                      .sublist(0, min(widget.imageUrls.length, 6)),
                 )
               : Container(
                   margin: EdgeInsets.only(left: 50),

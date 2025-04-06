@@ -249,66 +249,68 @@ class TournamentService {
 
   //Saaransh
   Future<bool> addSportToTournament(String tournamentId, String sport) async {
-  try {
-    // Fetch the tournament document.
-    DocumentSnapshot snapshot =
-        await _firestore.collection('tournaments').doc(tournamentId).get();
+    try {
+      // Fetch the tournament document.
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
 
-    if (!snapshot.exists) {
+      if (!snapshot.exists) {
+        return false;
+      }
+
+      // Cast the snapshot data to a Map.
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+      // Retrieve the current list of sports.
+      List<String> sports = List<String>.from(data['sports'] ?? []);
+
+      // Check if the sport is already in the list.
+      if (!sports.contains(sport)) {
+        sports.add(sport);
+        // Update Firestore with the new sports list.
+        await _firestore.collection('tournaments').doc(tournamentId).update({
+          'sports': sports,
+        });
+      }
+
+      // Create a new points table for the sport.
+      // Build a document ID based on the sport name, e.g., "sport_football"
+      String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
+
+      // Retrieve the list of contingents from the tournament document.
+      List<String> contingents = List<String>.from(data['contingents'] ?? []);
+
+      // Initialize the standings map with each contingent having default values.
+      Map<String, dynamic> standings = {};
+      for (var contingent in contingents) {
+        standings[contingent] = {
+          "wins": 0,
+          "losses": 0,
+          "draws": 0,
+          "points": 0,
+          "goalDifference": 0,
+          "matchesPlayed": 0,
+        };
+      }
+
+      // Create the points table document in the 'pointsTables' sub-collection.
+      await _firestore
+          .collection('tournaments')
+          .doc(tournamentId)
+          .collection('pointsTables')
+          .doc(sportDocId)
+          .set({
+        "standings": standings,
+      });
+
+      return true;
+    } catch (e) {
+      print(
+          "Error adding sport $sport to Tournament with Id $tournamentId: $e");
       return false;
     }
-
-    // Cast the snapshot data to a Map.
-    Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-
-    // Retrieve the current list of sports.
-    List<String> sports = List<String>.from(data['sports'] ?? []);
-
-    // Check if the sport is already in the list.
-    if (!sports.contains(sport)) {
-      sports.add(sport);
-      // Update Firestore with the new sports list.
-      await _firestore.collection('tournaments').doc(tournamentId).update({
-        'sports': sports,
-      });
-    }
-
-    // Create a new points table for the sport.
-    // Build a document ID based on the sport name, e.g., "sport_football"
-    String sportDocId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
-
-    // Retrieve the list of contingents from the tournament document.
-    List<String> contingents = List<String>.from(data['contingents'] ?? []);
-
-    // Initialize the standings map with each contingent having default values.
-    Map<String, dynamic> standings = {};
-    for (var contingent in contingents) {
-      standings[contingent] = {
-        "wins": 0,
-        "losses": 0,
-        "draws": 0,
-        "points": 0,
-        "goalDifference": 0,
-        "matchesPlayed": 0,
-      };
-    }
-
-    // Create the points table document in the 'pointsTables' sub-collection.
-    await _firestore
-        .collection('tournaments')
-        .doc(tournamentId)
-        .collection('pointsTables')
-        .doc(sportDocId)
-        .set({
-      "standings": standings,
-    });
-
-    return true;
-  } catch (e) {
-    print("Error adding sport $sport to Tournament with Id $tournamentId: $e");
-    return false;
   }
-}
+
   //Saaransh
   Future<bool> removeSportFromTournament(
       String tournamentId, String sport) async {

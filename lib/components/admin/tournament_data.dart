@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/services/gallery_utility.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 import 'package:hunger_games/utils/url_launchers.dart';
 
@@ -12,6 +13,7 @@ class TournamentData extends StatefulWidget {
 
 class _TournamentDataState extends State<TournamentData> {
   final TournamentService _tournamentService = TournamentService();
+  final GalleryService _galleryService = GalleryService();
   final TextStyle _fieldTextStyle =
       TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
   final TextStyle _valueTextStyle = TextStyle(fontSize: 16);
@@ -308,10 +310,33 @@ class _TournamentDataState extends State<TournamentData> {
                                       ),
                                       actions: [
                                         FilledButton(
-                                          onPressed: () {
+                                          onPressed: () async {
                                             if (_formKey.currentState!
-                                                .validate()) {}
-                                            // Navigator.of(context).pop();
+                                                .validate()) {
+                                              String imageUrl =
+                                                  _urlController.text;
+                                              bool success =
+                                                  await _galleryService
+                                                      .addImage(
+                                                widget.tournamentId,
+                                                imageUrl,
+                                              );
+
+                                              if (success) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Image added successfully"),
+                                                ));
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Failed to add image"),
+                                                ));
+                                              }
+                                              Navigator.of(context).pop();
+                                            }
                                           },
                                           child: Text("Add"),
                                         ),
