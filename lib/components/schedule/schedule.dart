@@ -86,7 +86,7 @@ class _ScheduleState extends State<Schedule> {
                   child: Text("© League Pilot. All rights reserved."),
                 ),
                 SizedBox(
-                  height: 650,
+                  height: 80,
                 ),
               ],
             ),

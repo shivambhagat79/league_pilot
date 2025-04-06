@@ -35,7 +35,9 @@ class _HomePageState extends State<HomePage> {
       PointsTable(
         tournamentId: widget.tournamentId,
       ),
-      const Teams(),
+      Teams(
+        tournamentId: widget.tournamentId,
+      ),
     ];
     super.initState();
   }
