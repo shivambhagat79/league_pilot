@@ -419,19 +419,21 @@ class MatchService {
   }
 
 
-  Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
-    return _firestore
-        .collection('matches')
-        .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
-        .orderBy('statusPriority')
-        .snapshots()
-        .map((query) {
-      return query.docs.map((doc) {
-        // Make sure Match.fromMap can handle doc.id if needed
-        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
-  }
+ Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
+  return _firestore
+      .collection('matches')
+      .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
+      // Only include matches that are live (priority 0) or upcoming (priority 1)
+      .where('statusPriority', isLessThan: 2)
+      .orderBy('statusPriority')
+      .snapshots()
+      .map((query) {
+    return query.docs.map((doc) {
+      return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+    }).toList();
+  });
+}
+
   Future<bool> deleteMatch(String matchId) async {
     try {
       await _firestore.collection('matches').doc(matchId).delete();
