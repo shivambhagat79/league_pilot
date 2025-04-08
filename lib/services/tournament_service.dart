@@ -275,7 +275,9 @@ class TournamentService {
 
       // Create a new points table for the sport.
       // Build a document ID based on the sport name, e.g., "sport_football"
+
       String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
+
 
       // Retrieve the list of contingents from the tournament document.
       List<String> contingents = List<String>.from(data['contingents'] ?? []);
@@ -322,29 +324,76 @@ class TournamentService {
         return false;
       }
 
-      // Cast the snapshot data to a Map
+      // Cast the snapshot data to a Map.
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
 
-      // Retrieve the current list of sports
-      List<String> sports = List<String>.from(data['sports'] ?? []);
+      // Retrieve the current list of sports.
+      List<String> sportsList = List<String>.from(data['sports'] ?? []);
 
-      // Check if the sport exists in the list
-      if (sports.contains(sport)) {
-        sports.remove(sport);
+      // Check if the sport exists in the list.
+      if (sportsList.contains(sport)) {
+        sportsList.remove(sport);
 
-        // Update Firestore with the modified list
+        // Update Firestore with the modified list.
         await _firestore.collection('tournaments').doc(tournamentId).update({
-          'sports': sports,
+          'sports': sportsList,
         });
 
-        return true; // Sport successfully removed
-      }
+        // Construct the sport doc ID (assuming the same convention used during addition).
+        String sportDocId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
 
-      return false; // Sport was not in the list
+        // Remove the points table document for that sport.
+        await _firestore
+            .collection('tournaments')
+            .doc(tournamentId)
+            .collection('pointsTables')
+            .doc(sportDocId)
+            .delete();
+
+        return true; // Sport successfully removed.
+      }
+      return false; // Sport was not in the list.
     } catch (e) {
       print(
           "Error removing sport $sport from Tournament with Id $tournamentId: $e");
       return false;
     }
   }
+  Future<bool> deleteTournament(String tournamentId) async {
+    try {
+      // Reference to the tournament document.
+      DocumentReference tournamentRef = _firestore.collection('tournaments').doc(tournamentId);
+
+      // Delete documents in the "pointsTables" subcollection.
+      QuerySnapshot pointsTablesSnapshot = await tournamentRef.collection('pointsTables').get();
+      for (DocumentSnapshot doc in pointsTablesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      // Delete documents in the "matches" subcollection.
+      QuerySnapshot matchesSnapshot = await tournamentRef.collection('matches').get();
+      for (DocumentSnapshot doc in matchesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      // Now delete the main tournament document.
+      await tournamentRef.delete();
+
+      return true;
+    } catch (e) {
+      print("Error deleting tournament with ID $tournamentId: $e");
+      return false;
+    }
+  }
+  Future<bool> endTournament(String tournamentId) async {
+  try {
+    await _firestore.collection('tournaments').doc(tournamentId).update({
+      'status': 'result',
+    });
+    return true;
+  } catch (e) {
+    print("Error ending tournament with ID $tournamentId: $e");
+    return false;
+  }
+}
+
 }
