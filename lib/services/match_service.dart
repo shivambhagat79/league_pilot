@@ -146,8 +146,6 @@ class MatchService {
       String contingentA = teamIds[0];
       String contingentB = teamIds[1];
 
-      
-
       int scoreA = teamScores[contingentA] ?? 0;
       int scoreB = teamScores[contingentB] ?? 0;
 
@@ -417,21 +415,20 @@ class MatchService {
     }
   }
 
- Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
-  return _firestore
-      .collection('matches')
-      .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
-      // Only include matches that are live (priority 0) or upcoming (priority 1)
-      .where('statusPriority', isLessThan: 2)
-      .orderBy('statusPriority')
-      .snapshots()
-      .map((query) {
-    return query.docs.map((doc) {
-      return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-    }).toList();
-  });
-}
-
+  Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
+    return _firestore
+        .collection('matches')
+        .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
+        // Only include matches that are live (priority 0) or upcoming (priority 1)
+        .where('statusPriority', isLessThan: 2)
+        .orderBy('statusPriority')
+        .snapshots()
+        .map((query) {
+      return query.docs.map((doc) {
+        return Match.fromMap(doc.id, doc.data());
+      }).toList();
+    });
+  }
 
   Future<bool> deleteMatch(String matchId) async {
     try {
@@ -443,4 +440,3 @@ class MatchService {
     }
   }
 }
-

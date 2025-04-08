@@ -327,6 +327,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                         Expanded(
                           child: TextFormField(
                             controller: _lossController,
+                            textAlign: TextAlign.center,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],
@@ -347,6 +348,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                         Expanded(
                           child: TextFormField(
                             controller: _drawController,
+                            textAlign: TextAlign.center,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly
                             ],

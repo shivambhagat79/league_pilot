@@ -130,6 +130,25 @@ class TournamentService {
     }
   }
 
+  Future<String?> getTournamentId(String tournamentName) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('tournaments')
+          .where('name', isEqualTo: tournamentName)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot
+            .docs.first.id; // Return the first matching tournament ID
+      } else {
+        return null; // No tournament found with that name
+      }
+    } catch (e) {
+      print("Error retrieving tournament ID: $e");
+      return null;
+    }
+  }
+
   Future<List<Map<String, String>>> getActiveTournaments() async {
     try {
       QuerySnapshot snapshot = await _firestore
@@ -278,7 +297,6 @@ class TournamentService {
 
       String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
 
-
       // Retrieve the list of contingents from the tournament document.
       List<String> contingents = List<String>.from(data['contingents'] ?? []);
 
@@ -359,18 +377,22 @@ class TournamentService {
       return false;
     }
   }
+
   Future<bool> deleteTournament(String tournamentId) async {
     try {
       // Reference to the tournament document.
-      DocumentReference tournamentRef = _firestore.collection('tournaments').doc(tournamentId);
+      DocumentReference tournamentRef =
+          _firestore.collection('tournaments').doc(tournamentId);
 
       // Delete documents in the "pointsTables" subcollection.
-      QuerySnapshot pointsTablesSnapshot = await tournamentRef.collection('pointsTables').get();
+      QuerySnapshot pointsTablesSnapshot =
+          await tournamentRef.collection('pointsTables').get();
       for (DocumentSnapshot doc in pointsTablesSnapshot.docs) {
         await doc.reference.delete();
       }
       // Delete documents in the "matches" subcollection.
-      QuerySnapshot matchesSnapshot = await tournamentRef.collection('matches').get();
+      QuerySnapshot matchesSnapshot =
+          await tournamentRef.collection('matches').get();
       for (DocumentSnapshot doc in matchesSnapshot.docs) {
         await doc.reference.delete();
       }
@@ -384,16 +406,16 @@ class TournamentService {
       return false;
     }
   }
-  Future<bool> endTournament(String tournamentId) async {
-  try {
-    await _firestore.collection('tournaments').doc(tournamentId).update({
-      'status': 'result',
-    });
-    return true;
-  } catch (e) {
-    print("Error ending tournament with ID $tournamentId: $e");
-    return false;
-  }
-}
 
+  Future<bool> endTournament(String tournamentId) async {
+    try {
+      await _firestore.collection('tournaments').doc(tournamentId).update({
+        'status': 'result',
+      });
+      return true;
+    } catch (e) {
+      print("Error ending tournament with ID $tournamentId: $e");
+      return false;
+    }
+  }
 }

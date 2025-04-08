@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hunger_games/pages/player/player.dart';
+import 'package:hunger_games/pages/scorekeeper/scorekeeper.dart';
 import 'package:hunger_games/services/auth.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
 
@@ -57,7 +57,7 @@ class _ScorekeeperRegFormState extends State<ScorekeeperRegForm> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PlayerPage(),
+            builder: (context) => ScorekeeperPage(),
           ),
         );
 
