@@ -66,12 +66,14 @@ class LandingPage extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () async {
                 bool isPlayerLoggedIn = await getPlayerLoginState();
+                String playerEmail = await getPlayerEmail() ?? "";
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        isPlayerLoggedIn ? PlayerPage() : PlayerAuthPage(),
+                    builder: (context) => isPlayerLoggedIn
+                        ? PlayerPage(playerEmail: playerEmail)
+                        : PlayerAuthPage(),
                   ),
                 );
               },

@@ -46,6 +46,7 @@ class _PlayerLoginFormState extends State<PlayerLoginForm> {
         return;
       } else {
         await savePlayerLoginState(true);
+        await savePlayerEmail(email);
         await savePlayerId(result[0]!);
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -59,7 +60,7 @@ class _PlayerLoginFormState extends State<PlayerLoginForm> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PlayerPage(),
+            builder: (context) => PlayerPage(playerEmail: email),
           ),
         );
       }

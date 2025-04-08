@@ -48,6 +48,7 @@ class _AdminPageState extends State<AdminPage> {
                 FilledButton(
                   onPressed: () async {
                     await saveAdminLoginState(false);
+                    await saveAdminEmail('');
                     await saveAdminId('');
                     await saveAdminType('');
                     Navigator.of(context).pop();
@@ -105,10 +106,13 @@ class _AdminPageState extends State<AdminPage> {
                               thickness: 1,
                             ),
                             ListTile(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 30),
+                              // contentPadding:
+                              //     EdgeInsets.symmetric(horizontal: 30),
                               title: Text(tournament['tournamentName']!),
                               subtitle: Text(tournament['hostInstitute']!),
+                              leading: tournament['status'] == 'active'
+                                  ? LiveIcon()
+                                  : Icon(Icons.lock),
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
@@ -121,34 +125,42 @@ class _AdminPageState extends State<AdminPage> {
                               },
                               trailing: PopupMenuButton(
                                 itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    child: ListTile(
-                                      title: Text('End Tournament'),
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: Text('End Tournament?'),
-                                            content: Text(
-                                                'Are you sure you want to end this tournament?'),
-                                            actions: [
-                                              FilledButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  getActiveTournaments();
-                                                },
-                                                child: Text('Yes'),
-                                              ),
-                                              OutlinedButton(
-                                                onPressed: () {},
-                                                child: Text('No'),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
+                                  if (tournament['status'] == 'active')
+                                    PopupMenuItem(
+                                      child: ListTile(
+                                        title: Text('End Tournament'),
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text('End Tournament?'),
+                                              content: Text(
+                                                  'Are you sure you want to end this tournament?'),
+                                              actions: [
+                                                FilledButton(
+                                                  onPressed: () async {
+                                                    await tournamentService
+                                                        .endTournament(tournament[
+                                                            'tournamentId']!);
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).pop();
+                                                    getActiveTournaments();
+                                                  },
+                                                  child: Text('Yes'),
+                                                ),
+                                                OutlinedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('No'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  ),
                                   PopupMenuItem(
                                     child: ListTile(
                                       title: Text('Delete Tournament'),
@@ -161,7 +173,11 @@ class _AdminPageState extends State<AdminPage> {
                                                 'Are you sure you want to Delete this tournament?'),
                                             actions: [
                                               FilledButton(
-                                                onPressed: () {
+                                                onPressed: () async {
+                                                  await tournamentService
+                                                      .deleteTournament(
+                                                          tournament[
+                                                              'tournamentId']!);
                                                   Navigator.of(context).pop();
                                                   Navigator.of(context).pop();
 
@@ -173,7 +189,6 @@ class _AdminPageState extends State<AdminPage> {
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                   Navigator.of(context).pop();
-                                                  getActiveTournaments();
                                                 },
                                                 child: Text('No'),
                                               ),
@@ -197,6 +212,54 @@ class _AdminPageState extends State<AdminPage> {
                 ),
               ],
             ),
+    );
+  }
+}
+
+class LiveIcon extends StatefulWidget {
+  const LiveIcon({super.key});
+
+  @override
+  State<LiveIcon> createState() => _LiveIconState();
+}
+
+class _LiveIconState extends State<LiveIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 750),
+    );
+    _opacityAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          _controller.forward();
+        }
+      });
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacityAnimation,
+      child: Icon(
+        Icons.circle,
+        color: Colors.red,
+      ),
     );
   }
 }

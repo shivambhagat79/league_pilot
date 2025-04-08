@@ -143,14 +143,11 @@ class MatchService {
 
       // Step B: Fetch the contingents for each team
       // For simplicity, assume exactly 2 teams:
-      String teamAId = teamIds[0];
-      String teamBId = teamIds[1];
+      String contingentA = teamIds[0];
+      String contingentB = teamIds[1];
 
-      String contingentA = await _getContingentForTeam(teamAId);
-      String contingentB = await _getContingentForTeam(teamBId);
-
-      int scoreA = teamScores[teamAId] ?? 0;
-      int scoreB = teamScores[teamBId] ?? 0;
+      int scoreA = teamScores[contingentA] ?? 0;
+      int scoreB = teamScores[contingentB] ?? 0;
 
       // Step C: Determine winner/draw
       String verdict;
@@ -191,26 +188,6 @@ class MatchService {
       print("Error finalizing match: $e");
       return false;
     }
-  }
-
-  Future<String> _getContingentForTeam(String teamName) async {
-    QuerySnapshot querySnap = await _firestore
-        .collection('teams')
-        .where('name', isEqualTo: teamName)
-        .limit(1)
-        .get();
-
-    if (querySnap.docs.isEmpty) {
-      print("No team doc found for name: $teamName");
-      return "UnknownContingent";
-    }
-
-    // Take the first matching doc
-    DocumentSnapshot teamDoc = querySnap.docs.first;
-    Map<String, dynamic> teamData = teamDoc.data() as Map<String, dynamic>;
-
-    // Return the contingent ID (or name) from that doc
-    return teamData['contingentName'] ?? "UnknownContingent";
   }
 
   /// Ends the specified sport by:
@@ -443,6 +420,7 @@ class MatchService {
     return _firestore
         .collection('matches')
         .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
+        .where('statusPriority', isLessThan: 2)
         .orderBy('statusPriority')
         .snapshots();
   }
