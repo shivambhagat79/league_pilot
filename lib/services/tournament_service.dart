@@ -372,7 +372,7 @@ class TournamentService {
       for (DocumentSnapshot doc in matchesSnapshot.docs) {
         await doc.reference.delete();
       }
-      
+
       // Now delete the main tournament document.
       await tournamentRef.delete();
 
@@ -382,4 +382,16 @@ class TournamentService {
       return false;
     }
   }
+  Future<bool> endTournament(String tournamentId) async {
+  try {
+    await _firestore.collection('tournaments').doc(tournamentId).update({
+      'status': 'result',
+    });
+    return true;
+  } catch (e) {
+    print("Error ending tournament with ID $tournamentId: $e");
+    return false;
+  }
+}
+
 }
