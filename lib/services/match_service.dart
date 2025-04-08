@@ -431,7 +431,7 @@ class MatchService {
         return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
-
+  }
   Future<bool> deleteMatch(String matchId) async {
     try {
       await _firestore.collection('matches').doc(matchId).delete();
@@ -443,3 +443,4 @@ class MatchService {
 
   }
 }
+
