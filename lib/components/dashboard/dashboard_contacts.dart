@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/utils/url_launchers.dart';
 
 class DashboardContacts extends StatelessWidget {
-  const DashboardContacts({super.key});
+  final Map<String, dynamic> tournamentData;
+  DashboardContacts({super.key, required this.tournamentData});
+  final TextStyle _phoneNumberStyle = TextStyle(
+    fontSize: 14,
+    color: Colors.blue,
+    decoration: TextDecoration.underline,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +58,16 @@ class DashboardContacts extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   +91 9876543210", style: TextStyle(fontSize: 14)),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          phoneLauncher(tournamentData["organiser"]);
+                        },
+                        child: Text(
+                          "+91 ${tournamentData['organiser']}",
+                          style: _phoneNumberStyle,
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -68,7 +84,16 @@ class DashboardContacts extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   +91 9876543210", style: TextStyle(fontSize: 14)),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          phoneLauncher(tournamentData["medical"]);
+                        },
+                        child: Text(
+                          "+91 ${tournamentData['medical']}",
+                          style: _phoneNumberStyle,
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -85,7 +110,16 @@ class DashboardContacts extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   +91 9876543210", style: TextStyle(fontSize: 14)),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          phoneLauncher(tournamentData["security"]);
+                        },
+                        child: Text(
+                          "+91 ${tournamentData['security']}",
+                          style: _phoneNumberStyle,
+                        ),
+                      ),
                     ],
                   ),
                   Row(
@@ -102,8 +136,16 @@ class DashboardContacts extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text("   tournament@leaguepilot.com",
-                          style: TextStyle(fontSize: 14)),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () {
+                          emailLauncher(tournamentData["organiserEmail"]);
+                        },
+                        child: Text(
+                          tournamentData['organiserEmail'],
+                          style: _phoneNumberStyle,
+                        ),
+                      ),
                     ],
                   ),
                 ],

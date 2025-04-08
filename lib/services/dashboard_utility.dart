@@ -1,10 +1,8 @@
-import '../models/tournament.dart';
+// changed the classname from TournamentService to DashboardService
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import '../models/match.dart';
 
-// Saaransh
-// changed the classname from TournamentService to DashboardService
 class DashboardService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future<List<Match>> getRecentMatches(String tournamentId) async {

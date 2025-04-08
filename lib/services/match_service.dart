@@ -369,18 +369,13 @@ class MatchService {
   }
 
   /// Streams all matches for [tournamentId], sorted by statusPriority (0 -> 1 -> 2).
-  Stream<List<Match>> getMatchesForTournament(String tournamentId) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMatchesForTournament(
+      String tournamentId) {
     return _firestore
         .collection('matches')
         .where('tournament', isEqualTo: tournamentId)
         .orderBy('statusPriority')
-        .snapshots()
-        .map((query) {
-      return query.docs.map((doc) {
-        // Make sure Match.fromMap can handle doc.id if needed
-        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-      }).toList();
-    });
+        .snapshots();
   }
 
 //returns a bool if the score was updated or not
@@ -423,6 +418,7 @@ class MatchService {
     }
   }
 
+
   Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
     return _firestore
         .collection('matches')
@@ -435,5 +431,15 @@ class MatchService {
         return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
       }).toList();
     });
+
+  Future<bool> deleteMatch(String matchId) async {
+    try {
+      await _firestore.collection('matches').doc(matchId).delete();
+      return true; // Indicate success
+    } catch (e) {
+      print('Error deleting match: $e');
+      return false; // Indicate failure
+    }
+
   }
 }
