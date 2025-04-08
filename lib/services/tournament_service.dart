@@ -273,6 +273,7 @@ class TournamentService {
           'tournamentId': doc.id,
           'tournamentName': data['name'] ?? '',
           'hostInstitute': data['hostInstitute'] ?? '',
+          'status': data['status'] ?? 'unknown',
         };
       }).toList();
 
