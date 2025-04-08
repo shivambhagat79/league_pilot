@@ -149,6 +149,23 @@ class TournamentService {
     }
   }
 
+  Future<String> getTournamentName(String tournamentId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        return data['name']?.toString() ?? 'Unknown Tournament';
+      } else {
+        return 'Tournament not found';
+      }
+    } catch (e) {
+      print("Error retrieving tournament name: $e");
+      return 'Error retrieving tournament name';
+    }
+  }
+
   Future<List<Map<String, String>>> getActiveTournaments() async {
     try {
       QuerySnapshot snapshot = await _firestore

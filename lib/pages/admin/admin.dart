@@ -48,6 +48,7 @@ class _AdminPageState extends State<AdminPage> {
                 FilledButton(
                   onPressed: () async {
                     await saveAdminLoginState(false);
+                    await saveAdminEmail('');
                     await saveAdminId('');
                     await saveAdminType('');
                     Navigator.of(context).pop();
