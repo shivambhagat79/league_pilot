@@ -47,6 +47,7 @@ class _AdminAuthPageState extends State<AdminAuthPage> {
       } else {
         await saveAdminLoginState(true);
         await saveAdminEmail(email);
+        await saveAdminType('admin');
         await saveAdminId(result[0]!);
 
         ScaffoldMessenger.of(context).showSnackBar(

@@ -68,6 +68,15 @@ class _SportsTableState extends State<SportsTable> {
                   label: Text("Team"),
                 ),
                 DataColumn(
+                  label: Text("W"),
+                ),
+                DataColumn(
+                  label: Text("L"),
+                ),
+                DataColumn(
+                  label: Text("D"),
+                ),
+                DataColumn(
                   label: Text("Points"),
                 ),
               ],
@@ -78,6 +87,9 @@ class _SportsTableState extends State<SportsTable> {
                         DataCell(Text(
                             (widget.standings.indexOf(team) + 1).toString())),
                         DataCell(Text(team['contingentId'])),
+                        DataCell(Text(team['wins'].toString())),
+                        DataCell(Text(team['losses'].toString())),
+                        DataCell(Text(team['draws'].toString())),
                         DataCell(Text(team['points'].toString())),
                       ],
                     ),

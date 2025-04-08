@@ -357,6 +357,9 @@ class _TournamentDataState extends State<TournamentData> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 80,
+              ),
             ],
           );
   }

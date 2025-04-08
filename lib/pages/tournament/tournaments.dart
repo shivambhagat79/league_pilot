@@ -52,92 +52,92 @@ class _TournamentsPageState extends State<TournamentsPage> {
         child: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  SizedBox(height: 100),
-                  Text(
-                    'Active\nTournaments',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: "Overcame",
-                      letterSpacing: 3,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withAlpha(120),
-                          blurRadius: 9,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                SizedBox(height: 100),
+                Text(
+                  'Active\nTournaments',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontFamily: "Overcame",
+                    letterSpacing: 3,
+                    // shadows: [
+                    //   Shadow(
+                    //     color: Colors.black.withAlpha(120),
+                    //     blurRadius: 9,
+                    //     offset: Offset(0, 2),
+                    //   ),
+                    // ],
                   ),
-                  SizedBox(height: 50),
-                  _isLoading
-                      ? CircularProgressIndicator(
-                          color: Colors.white,
-                        )
-                      : Column(
-                          children: _tournaments
-                              .map(
-                                (tournament) => Container(
-                                  margin: EdgeInsets.only(bottom: 10),
-                                  child: ElevatedButton(
-                                    style: ButtonStyle(
-                                      backgroundColor: WidgetStateProperty.all(
-                                        Colors.white.withAlpha(200),
-                                      ),
-                                      shape: WidgetStateProperty.all(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                      ),
+                ),
+                SizedBox(height: 50),
+                _isLoading
+                    ? CircularProgressIndicator(
+                        color: Colors.white,
+                      )
+                    : Column(
+                        children: _tournaments
+                            .map(
+                              (tournament) => Container(
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStateProperty.all(
+                                      Colors.white.withAlpha(200),
                                     ),
-                                    onPressed: () {
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => HomePage(
-                                            tournamentId:
-                                                tournament["tournamentId"]!,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: double.maxFinite,
-                                      padding: EdgeInsets.all(10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            tournament["tournamentName"]!,
-                                            style: TextStyle(
-                                              color: Colors.teal.shade800,
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            tournament["hostInstitute"]!,
-                                            style: TextStyle(
-                                              color: Colors.teal.shade500,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
+                                    shape: WidgetStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
                                   ),
+                                  onPressed: () {
+                                    Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(
+                                          tournamentId:
+                                              tournament["tournamentId"]!,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: double.maxFinite,
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          tournament["tournamentName"]!,
+                                          style: TextStyle(
+                                            color: Colors.teal.shade800,
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          tournament["hostInstitute"]!,
+                                          style: TextStyle(
+                                            color: Colors.teal.shade500,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              )
-                              .toList(),
-                        ),
-                ],
-              )),
+                              ),
+                            )
+                            .toList(),
+                      ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -49,6 +49,7 @@ class _AdminPageState extends State<AdminPage> {
                   onPressed: () async {
                     await saveAdminLoginState(false);
                     await saveAdminId('');
+                    await saveAdminType('');
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },

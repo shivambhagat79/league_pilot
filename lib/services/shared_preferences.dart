@@ -16,6 +16,11 @@ Future<void> saveAdminEmail(String adminEmail) async {
   await prefs.setString('adminEmail', adminEmail);
 }
 
+Future<void> savePlayerEmail(String playerEmail) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('playerEmail', playerEmail);
+}
+
 Future<void> savePlayerId(String id) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('playerId', id);
@@ -24,6 +29,11 @@ Future<void> savePlayerId(String id) async {
 Future<void> saveAdminId(String id) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('adminId', id);
+}
+
+Future<void> saveAdminType(String adminType) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('adminType', adminType);
 }
 
 // Function to retrieve the login state
@@ -52,4 +62,14 @@ Future<String?> getAdminId() async {
 Future<String?> getAdminEmail() async {
   final prefs = await SharedPreferences.getInstance();
   return prefs.getString('adminEmail');
+}
+
+Future<String?> getPlayerEmail() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('playerEmail');
+}
+
+Future<String?> getAdminType() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('adminType');
 }

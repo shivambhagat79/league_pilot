@@ -212,4 +212,52 @@ class PointsService {
       return list;
     });
   }
+
+  Future<List<Map<String, dynamic>>> getSportTable(
+      String tournamentId, String sport) async {
+    final snapshot = await _firestore
+        .collection('tournaments')
+        .doc(tournamentId)
+        .collection('pointsTables')
+        .doc("sport_${sport.toLowerCase().replaceAll(' ', '_')}")
+        .get();
+
+    if (!snapshot.exists) {
+      return [];
+    }
+
+    final data = snapshot.data() as Map<String, dynamic>;
+    final standingsMap = data['standings'] ?? {};
+
+    List<Map<String, dynamic>> list = [];
+
+    (standingsMap as Map<String, dynamic>).forEach((contingentId, statsAny) {
+      final stats = statsAny as Map<String, dynamic>;
+      int wins = stats['wins'] ?? 0;
+      int losses = stats['losses'] ?? 0;
+      int draws = stats['draws'] ?? 0;
+      int points = stats['points'] ?? 0;
+      int goalDiff = stats['goalDifference'] ?? 0;
+      int matchesPlayed = stats['matchesPlayed'] ?? 0;
+
+      list.add({
+        'contingentId': contingentId,
+        'wins': wins,
+        'losses': losses,
+        'draws': draws,
+        'points': points,
+        'goalDifference': goalDiff,
+        'matchesPlayed': matchesPlayed,
+      });
+    });
+
+    list.sort((a, b) {
+      if (b['points'] != a['points']) {
+        return b['points'] - a['points'];
+      }
+      return b['goalDifference'] - a['goalDifference'];
+    });
+
+    return list;
+  }
 }
