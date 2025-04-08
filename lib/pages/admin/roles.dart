@@ -50,7 +50,7 @@ class _RolesPageState extends State<RolesPage> {
             SizedBox(height: 50),
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AdminAuthPage(),
@@ -70,7 +70,7 @@ class _RolesPageState extends State<RolesPage> {
             SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () async {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ScorekeeperAuthPage(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
+import 'package:hunger_games/pages/player/create_team.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
 
 class PlayerPage extends StatefulWidget {
@@ -43,7 +44,32 @@ class _PlayerPageState extends State<PlayerPage> {
           ),
         ),
       ],
-      child: Container(),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => CreateTeamPage(),
+            ),
+          );
+        },
+        label: Text('Create Team'),
+        icon: Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        foregroundColor: Theme.of(context).colorScheme.onSecondary,
+      ),
+      child: Column(
+        children: [
+          Text(
+            "Your Info",
+            style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Overcame",
+                letterSpacing: 5,
+                color: Colors.black54),
+          ),
+        ],
+      ),
     );
   }
 }
