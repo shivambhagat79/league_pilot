@@ -4,7 +4,6 @@ import 'package:hunger_games/components/admin/sports_data.dart';
 import 'package:hunger_games/components/admin/tournament_data.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
 import 'package:hunger_games/pages/admin/create_match.dart';
-import 'package:hunger_games/pages/admin/update_tournament.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 
 class AdminTourrnamentPage extends StatefulWidget {
@@ -184,24 +183,7 @@ class _AdminTourrnamentPageState extends State<AdminTourrnamentPage> {
                   label: Text('Add Sport'),
                   icon: Icon(Icons.add),
                 )
-              : _selectedIndex == 2
-                  ? FloatingActionButton.extended(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => UpdateTournamentPage(
-                              tournamentId: widget.tournamentId,
-                            ),
-                          ),
-                        );
-                      },
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onSecondary,
-                      icon: Icon(Icons.edit),
-                      label: Text('Update Info'),
-                    )
-                  : null,
+              : null,
       child: _pages[_selectedIndex],
     );
   }

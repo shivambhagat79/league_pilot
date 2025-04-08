@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hunger_games/services/gallery_utility.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 import 'package:hunger_games/utils/url_launchers.dart';
 
@@ -12,6 +13,7 @@ class TournamentData extends StatefulWidget {
 
 class _TournamentDataState extends State<TournamentData> {
   final TournamentService _tournamentService = TournamentService();
+  final GalleryService _galleryService = GalleryService();
   final TextStyle _fieldTextStyle =
       TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
   final TextStyle _valueTextStyle = TextStyle(fontSize: 16);
@@ -20,6 +22,9 @@ class _TournamentDataState extends State<TournamentData> {
     color: Colors.blue,
     decoration: TextDecoration.underline,
   );
+
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _urlController = TextEditingController();
 
   late Map<String, dynamic> _tournamentData;
   bool _isLoading = false;
@@ -277,13 +282,83 @@ class _TournamentDataState extends State<TournamentData> {
                         DataCell(
                           OutlinedButton(
                             child: Text("Add Images"),
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text("Add Image URL"),
+                                      content: Form(
+                                        key: _formKey,
+                                        child: TextFormField(
+                                          controller: _urlController,
+                                          decoration: InputDecoration(
+                                            labelText: "Image URL",
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please enter a URL";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      actions: [
+                                        FilledButton(
+                                          onPressed: () async {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              String imageUrl =
+                                                  _urlController.text;
+                                              bool success =
+                                                  await _galleryService
+                                                      .addImage(
+                                                widget.tournamentId,
+                                                imageUrl,
+                                              );
+
+                                              if (success) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Image added successfully"),
+                                                ));
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      "Failed to add image"),
+                                                ));
+                                              }
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                          child: Text("Add"),
+                                        ),
+                                        OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("Close"),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 80,
               ),
             ],
           );

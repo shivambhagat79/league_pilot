@@ -19,7 +19,7 @@ class _PointsTableState extends State<PointsTable> {
       child: Column(
         children: [
           TournamentTable(tournamentId: widget.tournamentId),
-          SportsTablesContainer(),
+          SportsTablesContainer(tournamentId: widget.tournamentId),
         ],
       ),
     );
