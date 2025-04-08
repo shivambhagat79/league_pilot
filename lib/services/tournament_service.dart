@@ -357,4 +357,29 @@ class TournamentService {
       return false;
     }
   }
+  Future<bool> deleteTournament(String tournamentId) async {
+    try {
+      // Reference to the tournament document.
+      DocumentReference tournamentRef = _firestore.collection('tournaments').doc(tournamentId);
+
+      // Delete documents in the "pointsTables" subcollection.
+      QuerySnapshot pointsTablesSnapshot = await tournamentRef.collection('pointsTables').get();
+      for (DocumentSnapshot doc in pointsTablesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      // Delete documents in the "matches" subcollection.
+      QuerySnapshot matchesSnapshot = await tournamentRef.collection('matches').get();
+      for (DocumentSnapshot doc in matchesSnapshot.docs) {
+        await doc.reference.delete();
+      }
+      
+      // Now delete the main tournament document.
+      await tournamentRef.delete();
+
+      return true;
+    } catch (e) {
+      print("Error deleting tournament with ID $tournamentId: $e");
+      return false;
+    }
+  }
 }
