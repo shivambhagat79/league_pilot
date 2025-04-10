@@ -4,10 +4,10 @@ import 'package:hunger_games/services/teamservice.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 
 class CreateTeamPage extends StatefulWidget {
-  final String tournament;
+  final String tournamentId;
   final String contingent;
   const CreateTeamPage(
-      {super.key, required this.tournament, required this.contingent});
+      {super.key, required this.tournamentId, required this.contingent});
 
   @override
   State<CreateTeamPage> createState() => _CreateTeamPageState();
@@ -17,11 +17,10 @@ class _CreateTeamPageState extends State<CreateTeamPage> {
   final TournamentService _tournamentService = TournamentService();
   final TeamService _teamService = TeamService();
   late List<String> _sports;
-  late String _tournamentId;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _captainNameController = TextEditingController();
   final TextEditingController _captainEmailController = TextEditingController();
-  List<Map<String, String>> _players = [];
+  final List<Map<String, String>> _players = [];
   bool _isLoading = false;
   String? _selectedSport;
 
@@ -30,14 +29,11 @@ class _CreateTeamPageState extends State<CreateTeamPage> {
       _isLoading = true;
     });
 
-    String tournamentId =
-        await _tournamentService.getTournamentId(widget.tournament) ?? "";
-
-    List<String> sports = await _tournamentService.getSports(tournamentId);
+    List<String> sports =
+        await _tournamentService.getSports(widget.tournamentId);
 
     setState(() {
       _sports = sports;
-      _tournamentId = tournamentId;
       _isLoading = false;
     });
   }
@@ -61,7 +57,7 @@ class _CreateTeamPageState extends State<CreateTeamPage> {
       }
 
       String? teamId = await _teamService.createTeam(
-        tournamentId: _tournamentId,
+        tournamentId: widget.tournamentId,
         contingentName: widget.contingent,
         gender: "Mixed",
         sport: _selectedSport!,

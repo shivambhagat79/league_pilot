@@ -376,7 +376,7 @@ class TournamentService {
         });
 
         // Construct the sport doc ID (assuming the same convention used during addition).
-        String sportDocId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
+        String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
 
         // Remove the points table document for that sport.
         await _firestore

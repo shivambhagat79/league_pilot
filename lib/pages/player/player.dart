@@ -4,6 +4,7 @@ import 'package:hunger_games/pages/player/create_team.dart';
 import 'package:hunger_games/pages/tournament/tournaments.dart';
 import 'package:hunger_games/services/player_service.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
+import 'package:hunger_games/services/tournament_service.dart';
 
 class PlayerPage extends StatefulWidget {
   final String playerEmail;
@@ -15,10 +16,12 @@ class PlayerPage extends StatefulWidget {
 
 class _PlayerPageState extends State<PlayerPage> {
   final PlayerService _playerService = PlayerService();
+  final TournamentService _tournamentService = TournamentService();
   late Map<String, dynamic> playerData;
   final TextStyle _fieldTextStyle =
       TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   final TextStyle _valueTextStyle = TextStyle(fontSize: 16);
+  late String _tournamentName;
   bool _isLoading = false;
 
   Future<void> _fetchPlayerData() async {
@@ -28,9 +31,12 @@ class _PlayerPageState extends State<PlayerPage> {
 
     Map<String, dynamic> data =
         await _playerService.getPlayer(widget.playerEmail);
+    String tournamentName =
+        await _tournamentService.getTournamentName(data['tournament']);
 
     setState(() {
       playerData = data;
+      _tournamentName = tournamentName;
       _isLoading = false;
     });
   }
@@ -79,7 +85,7 @@ class _PlayerPageState extends State<PlayerPage> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => CreateTeamPage(
-                tournament: playerData['tournament'],
+                tournamentId: playerData['tournament'],
                 contingent: playerData['tournamentContingent'],
               ),
             ),
@@ -141,7 +147,7 @@ class _PlayerPageState extends State<PlayerPage> {
                           ),
                           DataCell(
                             Text(
-                              playerData['tournament'] ?? "",
+                              _tournamentName,
                               style: _valueTextStyle,
                             ),
                           ),
