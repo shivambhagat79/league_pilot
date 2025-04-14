@@ -105,6 +105,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
         date: _date ?? DateTime.now(),
         startTime: _startTime ?? TimeOfDay.now(),
         endTime: _endTime ?? TimeOfDay.now(),
+        scorekeeperEmail: _scorekeeperController.text,
       );
 
       if (matchId != null) {

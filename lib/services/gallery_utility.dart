@@ -25,4 +25,20 @@ class GalleryService {
       return [];
     }
   }
+
+  Future<bool> addImage(String tournamentId, String imageUrl) async {
+    try {
+      DocumentReference tournamentRef =
+          _firestore.collection('tournaments').doc(tournamentId);
+
+      await tournamentRef.update({
+        'pictureUrls': FieldValue.arrayUnion([imageUrl])
+      });
+
+      return true;
+    } catch (e) {
+      print("Error adding image to Tournament: $e");
+      return false;
+    }
+  }
 }

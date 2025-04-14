@@ -310,7 +310,9 @@ class TournamentService {
 
       // Create a new points table for the sport.
       // Build a document ID based on the sport name, e.g., "sport_football"
-      String sportDocId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
+
+      String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
+
 
       // Retrieve the list of contingents from the tournament document.
       List<String> contingents = List<String>.from(data['contingents'] ?? []);

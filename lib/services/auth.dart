@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/player.dart'; // Player model
 import '../models/admin.dart'; // Admin model
-import '../models/scorekeeper.dart'; // Scorekeeper model
 
 class AuthResult {
   final String? uid;
@@ -26,21 +25,28 @@ class AuthService {
         return AuthResult(uid: null, message: "Sign in failed");
       }
       // Check if this UID exists in the 'players' collection
-      DocumentSnapshot doc = await _firestore.collection('players').doc(user.uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('players').doc(user.uid).get();
       if (!doc.exists) {
         // The UID does not exist in players collection,
         return AuthResult(
             uid: null,
-            message: "Invalid credentials: invalid account used on player portal");
+            message:
+                "Invalid credentials: invalid account used on player portal");
       }
       return AuthResult(uid: user.uid, message: "Player sign in successful");
     } on FirebaseAuthException catch (e) {
-      return AuthResult(uid: null, message: e.message ?? "Sign in failed");// tackles specific exception like email already in use, invalid email, wrong password,etc
+      return AuthResult(
+          uid: null,
+          message: e.message ??
+              "Sign in failed"); // tackles specific exception like email already in use, invalid email, wrong password,etc
     } catch (e) {
-      return AuthResult(uid: null, message: e.toString());// tackles normal exception
+      return AuthResult(
+          uid: null, message: e.toString()); // tackles normal exception
     }
   }
-Future<AuthResult> signInAdmin(String email, String password) async {
+
+  Future<AuthResult> signInAdmin(String email, String password) async {
     try {
       // Sign in using Firebase Auth
       UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -50,20 +56,27 @@ Future<AuthResult> signInAdmin(String email, String password) async {
         return AuthResult(uid: null, message: "Sign in failed");
       }
       // Check if this UID exists in the 'admins' collection
-      DocumentSnapshot doc = await _firestore.collection('admins').doc(user.uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('admins').doc(user.uid).get();
       if (!doc.exists) {
         // The UID does not exist in admins collection,
         return AuthResult(
             uid: null,
-            message: "Invalid credentials: invalid account used on admin portal");
+            message:
+                "Invalid credentials: invalid account used on admin portal");
       }
       return AuthResult(uid: user.uid, message: "Admin sign in successful");
     } on FirebaseAuthException catch (e) {
-      return AuthResult(uid: null, message: e.message ?? "Sign in failed");// handles specific exception like email already in use, invalid email, wrong password,etc
+      return AuthResult(
+          uid: null,
+          message: e.message ??
+              "Sign in failed"); // handles specific exception like email already in use, invalid email, wrong password,etc
     } catch (e) {
-      return AuthResult(uid: null, message: e.toString());// tackeles normal exception 
+      return AuthResult(
+          uid: null, message: e.toString()); // tackeles normal exception
     }
   }
+
   // Register player with email, password, and additional details
   Future<AuthResult> signupWithEmailAndPassword({
     required String name,
@@ -77,7 +90,7 @@ Future<AuthResult> signInAdmin(String email, String password) async {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      if (user == null){
+      if (user == null) {
         return AuthResult(uid: null, message: "Registration failed");
       }
       // Create a Player instance with extra details
@@ -118,7 +131,7 @@ Future<AuthResult> signInAdmin(String email, String password) async {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      if (user == null){
+      if (user == null) {
         return AuthResult(uid: null, message: "Registration failed");
       }
       // Create an Admin instance with extra details
@@ -165,6 +178,7 @@ Future<AuthResult> signInAdmin(String email, String password) async {
       return [null, e.toString()];
     }
   }
+
   Future<List<String?>> registerAdmin({
     required String name,
     required String email,
@@ -173,10 +187,7 @@ Future<AuthResult> signInAdmin(String email, String password) async {
   }) async {
     try {
       AuthResult result = await signupWithEmailAndPasswordAdmin(
-          name: name,
-          email: email,
-          password: password,
-          tournament: tournament);
+          name: name, email: email, password: password, tournament: tournament);
       return [result.uid, result.message];
     } catch (e) {
       return [null, e.toString()];
@@ -200,7 +211,8 @@ Future<AuthResult> signInAdmin(String email, String password) async {
       return [null, e.toString()];
     }
   }
-   /// Signs in a scorekeeper using Firebase Auth.
+
+  /// Signs in a scorekeeper using Firebase Auth.
   /// Then verifies that the UID exists in the 'scorekeepers' collection.
   Future<AuthResult> signInScorekeeper(String email, String password) async {
     try {
@@ -210,13 +222,16 @@ Future<AuthResult> signInAdmin(String email, String password) async {
       if (user == null) {
         return AuthResult(uid: null, message: "Sign in failed");
       }
-      DocumentSnapshot doc = await _firestore.collection('scorekeepers').doc(user.uid).get();
+      DocumentSnapshot doc =
+          await _firestore.collection('scorekeepers').doc(user.uid).get();
       if (!doc.exists) {
         return AuthResult(
             uid: null,
-            message: "Invalid credentials: account not found in scorekeeper portal");
+            message:
+                "Invalid credentials: account not found in scorekeeper portal");
       }
-      return AuthResult(uid: user.uid, message: "Scorekeeper sign in successful");
+      return AuthResult(
+          uid: user.uid, message: "Scorekeeper sign in successful");
     } on FirebaseAuthException catch (e) {
       return AuthResult(uid: null, message: e.message ?? "Sign in failed");
     } catch (e) {
@@ -238,13 +253,20 @@ Future<AuthResult> signInAdmin(String email, String password) async {
         return AuthResult(uid: null, message: "Registration failed");
       }
       // Create Scorekeeper instance.
-      Scorekeeper newScorekeeper = Scorekeeper(
-        id: user.uid,
-        email: email,
-        password: password,
-      );
-      await _firestore.collection('scorekeepers').doc(user.uid).set(newScorekeeper.toMap());
-      return AuthResult(uid: user.uid, message: "Scorekeeper registration successful");
+      // Scorekeeper newScorekeeper = Scorekeeper(
+      //   id: user.uid,
+      //   email: email,
+      //   password: password,
+      // );
+      Map<String, String> newScorekeeper = {
+        'email': email,
+      };
+      await _firestore
+          .collection('scorekeepers')
+          .doc(user.uid)
+          .set(newScorekeeper);
+      return AuthResult(
+          uid: user.uid, message: "Scorekeeper registration successful");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         return AuthResult(uid: null, message: "The email is already in use");
@@ -262,7 +284,8 @@ Future<AuthResult> signInAdmin(String email, String password) async {
     required String password,
   }) async {
     try {
-      AuthResult result = await signupScorekeeper(email: email, password: password);
+      AuthResult result =
+          await signupScorekeeper(email: email, password: password);
       return [result.uid, result.message];
     } catch (e) {
       return [null, e.toString()];

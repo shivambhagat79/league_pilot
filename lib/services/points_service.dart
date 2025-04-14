@@ -43,12 +43,12 @@ class PointsService {
       await _incrementField(tournamentId, sportDocId, contingentA, 'losses', 1);
       await _incrementField(
           tournamentId, sportDocId, contingentA, 'points', losePoints);
-      //increase the matches of teams by one   
-     await _incrementField(
-          tournamentId, sportDocId, contingentA, 'matchesPlayed', 1);
-      await _incrementField(
-          tournamentId, sportDocId, contingentB, 'matchesPlayed', 1);     
+      //increase the matches of teams by one
     }
+    await _incrementField(
+        tournamentId, sportDocId, contingentA, 'matchesPlayed', 1);
+    await _incrementField(
+        tournamentId, sportDocId, contingentB, 'matchesPlayed', 1);
 
     // Update goalDifference
     int goalDiffA = scoreA - scoreB;
@@ -161,7 +161,8 @@ class PointsService {
       return allSports;
     });
   }
-   Stream<List<Map<String, dynamic>>> streamGeneralTable(String tournamentId) {
+
+  Stream<List<Map<String, dynamic>>> streamGeneralTable(String tournamentId) {
     return _firestore
         .collection('tournaments')
         .doc(tournamentId)
@@ -185,6 +186,7 @@ class PointsService {
         int gold = stats['gold'] ?? 0;
         int silver = stats['silver'] ?? 0;
         int bronze = stats['bronze'] ?? 0;
+        int points = stats['points'] ?? 0;
 
         // We won't filter anyone out here; all contingents are included
         list.add({
@@ -192,6 +194,7 @@ class PointsService {
           'gold': gold,
           'silver': silver,
           'bronze': bronze,
+          'points': points,
         });
       });
 
@@ -208,5 +211,53 @@ class PointsService {
 
       return list;
     });
+  }
+
+  Future<List<Map<String, dynamic>>> getSportTable(
+      String tournamentId, String sport) async {
+    final snapshot = await _firestore
+        .collection('tournaments')
+        .doc(tournamentId)
+        .collection('pointsTables')
+        .doc("sport_${sport.toLowerCase().replaceAll(' ', '_')}")
+        .get();
+
+    if (!snapshot.exists) {
+      return [];
+    }
+
+    final data = snapshot.data() as Map<String, dynamic>;
+    final standingsMap = data['standings'] ?? {};
+
+    List<Map<String, dynamic>> list = [];
+
+    (standingsMap as Map<String, dynamic>).forEach((contingentId, statsAny) {
+      final stats = statsAny as Map<String, dynamic>;
+      int wins = stats['wins'] ?? 0;
+      int losses = stats['losses'] ?? 0;
+      int draws = stats['draws'] ?? 0;
+      int points = stats['points'] ?? 0;
+      int goalDiff = stats['goalDifference'] ?? 0;
+      int matchesPlayed = stats['matchesPlayed'] ?? 0;
+
+      list.add({
+        'contingentId': contingentId,
+        'wins': wins,
+        'losses': losses,
+        'draws': draws,
+        'points': points,
+        'goalDifference': goalDiff,
+        'matchesPlayed': matchesPlayed,
+      });
+    });
+
+    list.sort((a, b) {
+      if (b['points'] != a['points']) {
+        return b['points'] - a['points'];
+      }
+      return b['goalDifference'] - a['goalDifference'];
+    });
+
+    return list;
   }
 }

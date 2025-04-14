@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/pages/admin/admin.dart';
-import 'package:hunger_games/pages/auth/admin_auth.dart';
+import 'package:hunger_games/pages/admin/roles.dart';
 import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/pages/auth/player_auth.dart';
+import 'package:hunger_games/pages/scorekeeper/scorekeeper.dart';
 import 'package:hunger_games/pages/tournament/tournaments.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
 
@@ -89,13 +90,36 @@ class LandingPage extends StatelessWidget {
               onPressed: () async {
                 bool isAdminLoggedIn = await getAdminLoginState();
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        isAdminLoggedIn ? AdminPage() : AdminAuthPage(),
-                  ),
-                );
+                if (isAdminLoggedIn) {
+                  String adminType = await getAdminType() ?? '';
+                  if (adminType == 'admin') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdminPage(),
+                      ),
+                    );
+                  } else if (adminType == 'scorekeeper') {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ScorekeeperPage(),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: Unknown admin type'),
+                      ),
+                    );
+                    return;
+                  }
+                } else {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => RolesPage(),
+                    ),
+                  );
+                }
               },
               icon: Icon(Icons.admin_panel_settings),
               label: Text('Admin Portal'),

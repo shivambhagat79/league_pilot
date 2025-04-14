@@ -49,6 +49,7 @@ class _AdminPageState extends State<AdminPage> {
                   onPressed: () async {
                     await saveAdminLoginState(false);
                     await saveAdminId('');
+                    await saveAdminType('');
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
@@ -140,6 +141,40 @@ class _AdminPageState extends State<AdminPage> {
                                               ),
                                               OutlinedButton(
                                                 onPressed: () {},
+                                                child: Text('No'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    child: ListTile(
+                                      title: Text('Delete Tournament'),
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text('Delete Tournament?'),
+                                            content: Text(
+                                                'Are you sure you want to Delete this tournament?'),
+                                            actions: [
+                                              FilledButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+
+                                                  getActiveTournaments();
+                                                },
+                                                child: Text('Yes'),
+                                              ),
+                                              OutlinedButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).pop();
+                                                  getActiveTournaments();
+                                                },
                                                 child: Text('No'),
                                               ),
                                             ],

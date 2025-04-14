@@ -1,14 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/points_table/sports_table.dart';
+import 'package:hunger_games/services/points_service.dart';
 
 class SportsTablesContainer extends StatefulWidget {
-  const SportsTablesContainer({super.key});
+  final String tournamentId;
+  const SportsTablesContainer({super.key, required this.tournamentId});
 
   @override
   State<SportsTablesContainer> createState() => _SportsTablesContainerState();
 }
 
 class _SportsTablesContainerState extends State<SportsTablesContainer> {
+  final PointsService _pointsService = PointsService();
+  late Stream<Map<String, List<Map<String, dynamic>>>> _sportsStream;
+  bool _isLoading = false;
+
+  Future<void> _fetchSportsData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    Stream<Map<String, List<Map<String, dynamic>>>> sportsStream =
+        _pointsService.streamAllSportsTables(widget.tournamentId);
+
+    setState(() {
+      _sportsStream = sportsStream;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSportsData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -62,17 +88,47 @@ class _SportsTablesContainerState extends State<SportsTablesContainer> {
               )
             ],
           ),
-          Column(
-            children: List.generate(5, (index) {
-              return SportsTable();
-            }),
-          ),
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : StreamBuilder(
+                  stream: _sportsStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text("Error: ${snapshot.error}"),
+                      );
+                    }
+
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: Text("No data available"),
+                      );
+                    }
+
+                    Map<String, List<Map<String, dynamic>>> sportsData =
+                        snapshot.data!;
+
+                    return Column(
+                      children: sportsData.entries.map((entry) {
+                        String sport = entry.key.substring(6);
+                        List<Map<String, dynamic>> standings = entry.value;
+
+                        print(
+                            "Sport: $sport, Standings: ${standings.toString()} entries");
+
+                        return SportsTable(
+                          sport: sport,
+                          standings: standings,
+                        );
+                      }).toList(),
+                    );
+                  }),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
             child: Text("© League Pilot. All rights reserved.",
                 style: TextStyle(color: Colors.white.withAlpha(190))),
           ),
-          SizedBox(height: 500),
+          SizedBox(height: 80),
         ],
       ),
     );

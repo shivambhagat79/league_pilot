@@ -225,8 +225,8 @@ class MatchService {
       Map<String, dynamic> teamScores =
           Map<String, dynamic>.from(scoreboard['teamScores'] ?? {});
 
-      // e.g., 3 for a win, 0 for a loss, 1 for a draw (or fetch from Tournament doc)
-      int winPoints = matchData['winPoints'] ?? 3;
+      // e.g., 2 for a win, 0 for a loss, 1 for a draw (or fetch from Tournament doc)
+      int winPoints = matchData['winPoints'] ?? 2;
       int losePoints = matchData['losePoints'] ?? 0;
       int drawPoints = matchData['drawPoints'] ?? 1;
 
@@ -241,9 +241,9 @@ class MatchService {
       // Step C: Determine winner/draw
       String verdict;
       if (scoreA > scoreB) {
-        verdict = contingentA; // the winner is ContingentA
+        verdict = "$contingentA won"; // the winner is ContingentA
       } else if (scoreB > scoreA) {
-        verdict = contingentB; // the winner is ContingentB
+        verdict = "$contingentB won"; // the winner is ContingentB
       } else {
         verdict = "draw";
       }
@@ -251,7 +251,7 @@ class MatchService {
       // Step D: Update match doc with verdict and status
       await _firestore.collection('matches').doc(matchId).update({
         'verdict': verdict,
-        'status': 'ended',
+        'status': 'results',
         'statusPriority': 2,
       });
 
