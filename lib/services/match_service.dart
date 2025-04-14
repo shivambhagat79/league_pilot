@@ -4,6 +4,7 @@ import '../models/match.dart';
 import '../models/schedule.dart';
 import '../models/scoreboard.dart';
 import 'points_service.dart';
+import '../models/cricket_scoreboard.dart';
 
 class MatchService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -22,7 +23,7 @@ class MatchService {
   /// Returns the newly created document ID, or `null` on error.
   Future<String?> createMatch({
     required String sport,
-    required String tournament,
+    required String tournamentId,
     required String gender,
     required String winPoints1,
     required String losePoints1,
@@ -64,7 +65,7 @@ class MatchService {
 
       // Build the Match object
       Match newMatch = Match(
-        tournament: tournament,
+        tournamentId: tournamentId,
         sport: sport,
         gender: gender,
         winpoints: winPoints,
@@ -89,6 +90,94 @@ class MatchService {
       return docRef.id;
     } catch (e) {
       print('Error creating match: $e');
+      return null;
+    }
+  }
+
+  Future<String?> createCricketMatch({
+    required String tournamentId,
+    required String sport,
+    required String gender,
+    required String venue,
+    required String winPoints1,
+    required String losePoints1,
+    required String drawPoints1,
+    required String team1,
+    required String team2,
+    required DateTime date,
+    required TimeOfDay startTime,
+    required TimeOfDay endTime,
+    required String scorekeeperEmail,
+  }) async {
+    try {
+      // Retrieve the tournament doc to extract the tournament name.
+      DocumentSnapshot tournamentSnap =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+      if (!tournamentSnap.exists) {
+        print("Tournament document not found for ID: $tournamentId");
+        return null;
+      }
+
+      int winPoints = int.tryParse(winPoints1) ?? 0;
+      int losePoints = int.tryParse(losePoints1) ?? 0;
+      int drawPoints = int.tryParse(drawPoints1) ?? 0;
+
+      // Create a Schedule instance.
+      Schedule schedule = Schedule(
+        date: date,
+        starttime: startTime,
+        endtime: endTime,
+        venue: venue,
+      );
+      List<String> teams = [team1, team2];
+      // Initialize the cricket-specific scoreboard.
+      // Here, we create a map for cricket stats for each team.
+      Map<String, Map<String, dynamic>> cricketStats = {
+        team1: {
+          "runs": 0,
+          "wickets": 0,
+          "overs": 0.0,
+        },
+        team2: {
+          "runs": 0,
+          "wickets": 0,
+          "overs": 0.0,
+        }
+      };
+      CricketScoreboard cricketScoreboard =
+          CricketScoreboard(teamStats: cricketStats);
+
+      // Set default match properties.
+      String status = "upcoming";
+      String verdict = "to be decided";
+      int statusPriority = 1; // e.g., 0 = live, 1 = upcoming, 2 = ended
+
+      // Create the Match instance.
+      // Note: In your Match model, the scoreboard field is typed as dynamic (or you use conditional parsing)
+      // so that if sport == Cricket you can pass a CricketScoreboard.
+      Match newMatch = Match(
+        tournamentId: tournamentId,
+        sport: sport,
+        gender: gender,
+        winpoints: winPoints,
+        losepoints: losePoints,
+        drawpoints: drawPoints,
+        scoreboard: cricketScoreboard,
+        teams: teams,
+        schedule: schedule,
+        status: status,
+        verdict: verdict,
+        statusPriority: statusPriority,
+        scorekeeperEmail: scorekeeperEmail,
+      );
+
+      // Save the match document in the "matches" collection.
+      DocumentReference docRef = _firestore.collection('matches').doc();
+      await docRef.set(newMatch.toMap());
+
+      return docRef.id;
+    } catch (e) {
+      print("Error creating cricket match: $e");
       return null;
     }
   }
@@ -146,8 +235,6 @@ class MatchService {
       String contingentA = teamIds[0];
       String contingentB = teamIds[1];
 
-      
-
       int scoreA = teamScores[contingentA] ?? 0;
       int scoreB = teamScores[contingentB] ?? 0;
 
@@ -192,7 +279,263 @@ class MatchService {
     }
   }
 
+  double convertOversStringToDouble(String oversString) {
+    // If there's no dot, parse it as full overs.
+    if (!oversString.contains('.')) {
+      return double.tryParse(oversString) ?? 0.0;
+    }
+    List<String> parts = oversString.split('.');
+    int fullOvers = int.tryParse(parts[0]) ?? 0;
+    int balls = int.tryParse(parts[1]) ?? 0;
+    // In cricket, number of balls should be less than 6.
+    if (balls >= 6) {
+      // If balls >= 6, adjust by taking modulo (or you can choose to handle it as an error).
+      balls = balls % 6;
+    }
+    return fullOvers + (balls / 6);
+  }
 
+  Future<bool> endCricketMatch(String matchId) async {
+    try {
+      // 1. Retrieve the match document.
+      DocumentSnapshot matchSnap =
+          await _firestore.collection('matches').doc(matchId).get();
+      if (!matchSnap.exists) {
+        print("Match not found for ID: $matchId");
+        return false;
+      }
+      Map<String, dynamic> matchData = matchSnap.data() as Map<String, dynamic>;
+
+      // 2. Ensure that the match is a cricket match.
+      String sport = (matchData['sport'] ?? '').toString();
+      if (sport.toLowerCase() != 'cricket') {
+        print("Match $matchId is not a cricket match.");
+        return false;
+      }
+
+      // 3. Extract tournament ID and team names from the match.
+      String tournamentId = matchData['tournament'] ?? '';
+      List<String> teamNames = List<String>.from(matchData['teams'] ?? []);
+      if (teamNames.length < 2) {
+        print("Not enough teams in match $matchId");
+        return false;
+      }
+      String team1Name = teamNames[0];
+      String team2Name = teamNames[1];
+
+      // 4. Retrieve the cricket scoreboard from the match document.
+      // Expected structure:
+      // "scoreboard": {
+      //    "Team A": { "runs": int, "wickets": int, "overs": double },
+      //    "Team B": { "runs": int, "wickets": int, "overs": double }
+      // }
+      Map<String, dynamic> scoreboard =
+          Map<String, dynamic>.from(matchData['scoreboard'] ?? {});
+
+      // Extract runs for each team. (Other fields like wickets or overs are in scoreboard as well.)
+      int team1Runs = (scoreboard[team1Name]?["runs"] ?? 0) as int;
+      int team2Runs = (scoreboard[team2Name]?["runs"] ?? 0) as int;
+      int team1Wickets = (scoreboard[team1Name]?["wickets"] ?? 0) as int;
+      int team2Wickets = (scoreboard[team2Name]?["wickets"] ?? 0) as int;
+      String team1Overs = (scoreboard[team1Name]?["overs"] ?? "0.0");
+      String team2Overs = (scoreboard[team2Name]?["overs"] ?? "0.0");
+      double team1OversDouble, team2OversDouble;
+      if (team1Wickets == 10) {
+        team1OversDouble = 20;
+      } else {
+        team1OversDouble = convertOversStringToDouble(team1Overs);
+      }
+      if (team2Wickets == 10) {
+        team2OversDouble = 20;
+      } else {
+        team2OversDouble = convertOversStringToDouble(team2Overs);
+      }
+
+      // 5. Determine the match verdict (winner or draw).
+      String verdict;
+      if (team1Runs > team2Runs) {
+        verdict = team1Name;
+      } else if (team2Runs > team1Runs) {
+        verdict = team2Name;
+      } else {
+        verdict = "draw";
+      }
+
+      // 6. Update the match document: set status to 'ended', statusPriority to 2, and verdict.
+      await _firestore.collection('matches').doc(matchId).update({
+        'status': 'ended',
+        'statusPriority': 2,
+        'verdict': verdict,
+      });
+
+      // 7. Retrieve the points distribution parameters from the match doc.
+      // These could be stored in the match doc or extracted from the tournament doc.
+      int winPoints = matchData['winpoints'] ?? 3;
+      int losePoints = matchData['losepoints'] ?? 0;
+      int drawPoints = matchData['drawpoints'] ?? 1;
+
+      // 8. Prepare the data to update the cricket points table.
+      // For cricket, we pass the entire cricket scoreboard, the list of contingents (team names),
+      // and the points distribution.
+      await updateCricketPointsTable(
+        tournamentId: tournamentId,
+        team1Name: team1Name,
+        team1Runs: team1Runs,
+        team1Overs: team1OversDouble,
+        team2Name: team2Name,
+        team2Runs: team1Runs, 
+        team2Overs: team2OversDouble,
+        winPoints: winPoints,
+        losePoints: losePoints,
+        drawPoints: drawPoints,
+      );
+
+      return true;
+    } catch (e) {
+      print("Error finalizing cricket match: $e");
+      return false;
+    }
+  }
+   
+
+  Future<void> updateCricketPointsTable({
+  required String tournamentId,
+  required String team1Name,
+  required int team1Runs,
+  required double team1Overs,
+  required String team2Name,
+  required int team2Runs,
+  required double team2Overs,
+  required int winPoints,
+  required int losePoints,
+  required int drawPoints,
+}) async {
+  String cricketDocId = "sport_cricket";
+  DocumentReference docRef = FirebaseFirestore.instance
+      .collection('tournaments')
+      .doc(tournamentId)
+      .collection('pointsTables')
+      .doc(cricketDocId);
+
+  // 1. Update cumulative statistics for both teams:
+  // For team1:
+  await docRef.update({
+    'standings.$team1Name.matchesPlayed': FieldValue.increment(1),
+    'standings.$team1Name.totalRunsScored': FieldValue.increment(team1Runs),
+    'standings.$team1Name.totalRunsConceded': FieldValue.increment(team2Runs),
+    'standings.$team1Name.oversPlayed': FieldValue.increment(team1Overs),
+    'standings.$team1Name.oversBowled': FieldValue.increment(team2Overs),
+  });
+  // For team2:
+  await docRef.update({
+    'standings.$team2Name.matchesPlayed': FieldValue.increment(1),
+    'standings.$team2Name.totalRunsScored': FieldValue.increment(team2Runs),
+    'standings.$team2Name.totalRunsConceded': FieldValue.increment(team1Runs),
+    'standings.$team2Name.oversPlayed': FieldValue.increment(team2Overs),
+    'standings.$team2Name.oversBowled': FieldValue.increment(team1Overs),
+  });
+
+  // 2. Determine match result and update wins/losses/draws and points.
+  if (team1Runs > team2Runs) {
+    // Team1 wins, team2 loses.
+    await docRef.update({
+      'standings.$team1Name.wins': FieldValue.increment(1),
+      'standings.$team1Name.points': FieldValue.increment(winPoints),
+      'standings.$team2Name.losses': FieldValue.increment(1),
+      'standings.$team2Name.points': FieldValue.increment(losePoints),
+    });
+  } else if (team2Runs > team1Runs) {
+    // Team2 wins, team1 loses.
+    await docRef.update({
+      'standings.$team2Name.wins': FieldValue.increment(1),
+      'standings.$team2Name.points': FieldValue.increment(winPoints),
+      'standings.$team1Name.losses': FieldValue.increment(1),
+      'standings.$team1Name.points': FieldValue.increment(losePoints),
+    });
+  } else {
+    // It's a draw.
+    await docRef.update({
+      'standings.$team1Name.draws': FieldValue.increment(1),
+      'standings.$team1Name.points': FieldValue.increment(drawPoints),
+      'standings.$team2Name.draws': FieldValue.increment(1),
+      'standings.$team2Name.points': FieldValue.increment(drawPoints),
+    });
+  }
+
+  // 3. Recalculate net run rate for each team.
+  DocumentSnapshot snap = await docRef.get();
+  if (snap.exists) {
+    Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
+    Map<String, dynamic> standings = Map<String, dynamic>.from(data['standings'] ?? {});
+
+    double computeNRR(Map<String, dynamic> stats) {
+      int totalRunsScored = stats['totalRunsScored'] ?? 0;
+      int totalRunsConceded = stats['totalRunsConceded'] ?? 0;
+      double oversPlayed = (stats['oversPlayed'] ?? 0).toDouble();
+      double oversBowled = (stats['oversBowled'] ?? 0).toDouble();
+      if (oversPlayed > 0 && oversBowled > 0) {
+        return (totalRunsScored / oversPlayed) - (totalRunsConceded / oversBowled);
+      }
+      return 0.0;
+    }
+
+    Map<String, dynamic> team1Stats = Map<String, dynamic>.from(standings[team1Name] ?? {});
+    Map<String, dynamic> team2Stats = Map<String, dynamic>.from(standings[team2Name] ?? {});
+
+    double team1NRR = computeNRR(team1Stats);
+    double team2NRR = computeNRR(team2Stats);
+
+    await docRef.update({
+      'standings.$team1Name.netRunRate': team1NRR,
+      'standings.$team2Name.netRunRate': team2NRR,
+    });
+  }
+}
+
+Stream<List<Map<String, dynamic>>> streamCricketPointsTable(String tournamentId) {
+  return FirebaseFirestore.instance
+      .collection('tournaments')
+      .doc(tournamentId)
+      .collection('pointsTables')
+      .doc('sport_cricket')
+      .snapshots()
+      .map((DocumentSnapshot snapshot) {
+    if (!snapshot.exists) {
+      return [];
+    }
+    final data = snapshot.data() as Map<String, dynamic>;
+    final standingsMap = data['standings'] as Map<String, dynamic>? ?? {};
+
+    // Convert standings Map to a List of Maps.
+    // For each entry, we use the Firestore key as the contingent name.
+    List<Map<String, dynamic>> standingsList = [];
+    // i want only those contingents with>=1 matches played
+    standingsMap.forEach((key, value) {
+      if (value is Map && value['matchesPlayed'] > 0) {
+        // Create a new map with the contingent name added as the key "contingentName".
+        Map<String, dynamic> contingentData = Map<String, dynamic>.from(value);
+        contingentData['contingentName'] = key;
+        standingsList.add(contingentData);
+      }
+    });
+  
+    // Sort the list:
+    // 1. Descending by points.
+    // 2. Then descending by netRunRate.
+    standingsList.sort((a, b) {
+      int pointsA = (a['points'] ?? 0) as int;
+      int pointsB = (b['points'] ?? 0) as int;
+      if (pointsB != pointsA) {
+        return pointsB - pointsA;
+      }
+      double nrrA = (a['netRunRate'] ?? 0.0).toDouble();
+      double nrrB = (b['netRunRate'] ?? 0.0).toDouble();
+      return nrrB.compareTo(nrrA);
+    });
+
+    return standingsList;
+  });
+}
   /// Ends the specified sport by:
   /// 1) Fetching the tournament doc (to get gold/silver/bronze medal points).
   /// 2) Retrieving the sport's points table doc (e.g. "sport_football").
@@ -418,21 +761,68 @@ class MatchService {
     }
   }
 
+  Future<bool> updateCricketScoreboard({
+    required String matchId,
+    required int team1Runs,
+    required int team1Wickets,
+    required String team1Overs,
+    required int team2Runs,
+    required int team2Wickets,
+    required String team2Overs,
+  }) async {
+    try {
+      // Retrieve the match document by matchId.
+      DocumentSnapshot matchSnap =
+          await _firestore.collection('matches').doc(matchId).get();
+      if (!matchSnap.exists) {
+        print("Match not found for ID: $matchId");
+        return false;
+      }
 
- Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
-  return _firestore
-      .collection('matches')
-      .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
-      // Only include matches that are live (priority 0) or upcoming (priority 1)
-      .where('statusPriority', isLessThan: 2)
-      .orderBy('statusPriority')
-      .snapshots()
-      .map((query) {
-    return query.docs.map((doc) {
-      return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
-    }).toList();
-  });
-}
+      // Cast document data to Map
+      Map<String, dynamic> matchData = matchSnap.data() as Map<String, dynamic>;
+
+      // Extract team names from the 'teams' field.
+      List<String> teams = List<String>.from(matchData['teams'] ?? []);
+      if (teams.length < 2) {
+        print("Not enough teams in match $matchId");
+        return false;
+      }
+      String team1Name = teams[0];
+      String team2Name = teams[1];
+
+      // Update the scoreboard with new absolute values.
+      // This does a direct set (not an increment).
+      await _firestore.collection('matches').doc(matchId).update({
+        'scoreboard.$team1Name.runs': team1Runs,
+        'scoreboard.$team1Name.wickets': team1Wickets,
+        'scoreboard.$team1Name.overs': team1Overs,
+        'scoreboard.$team2Name.runs': team2Runs,
+        'scoreboard.$team2Name.wickets': team2Wickets,
+        'scoreboard.$team2Name.overs': team2Overs,
+      });
+
+      return true;
+    } catch (e) {
+      print("Error updating cricket scoreboard: $e");
+      return false;
+    }
+  }
+
+  Stream<List<Match>> getMatchesForScorekeeper(String scorekeeperEmail) {
+    return _firestore
+        .collection('matches')
+        .where('scorekeeperEmail', isEqualTo: scorekeeperEmail)
+        // Only include matches that are live (priority 0) or upcoming (priority 1)
+        .where('statusPriority', isLessThan: 2)
+        .orderBy('statusPriority')
+        .snapshots()
+        .map((query) {
+      return query.docs.map((doc) {
+        return Match.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+      }).toList();
+    });
+  }
 
   Future<bool> deleteMatch(String matchId) async {
     try {
@@ -442,7 +832,5 @@ class MatchService {
       print('Error deleting match: $e');
       return false; // Indicate failure
     }
-
   }
 }
-
