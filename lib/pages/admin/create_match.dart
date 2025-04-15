@@ -94,7 +94,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
 
       String? matchId = await _matchService.createMatch(
         sport: _selectedSport ?? "",
-        tournament: widget.tournamentId,
+        tournamentId: widget.tournamentId,
         gender: _selectedGender ?? "Men",
         winPoints1: _winController.text,
         losePoints1: _lossController.text,
