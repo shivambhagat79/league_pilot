@@ -128,6 +128,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
         );
       }
 
+
       if (matchId != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
