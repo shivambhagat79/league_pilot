@@ -94,6 +94,8 @@ class _SportPageState extends State<SportPage> {
                         DataColumn(
                           label: Text("Points"),
                         ),
+                        if (widget.sport == "Cricket")
+                          DataColumn(label: Text("NRR")),
                       ],
                       rows: _pointsTable
                           .map(
@@ -106,6 +108,17 @@ class _SportPageState extends State<SportPage> {
                                 DataCell(Text(team['losses'].toString())),
                                 DataCell(Text(team['draws'].toString())),
                                 DataCell(Text(team['points'].toString())),
+                                if (widget.sport == "Cricket")
+                                  DataCell(
+                                    Text(
+                                      (team['netRunRate'] ?? 0.0).toString(),
+                                      style: TextStyle(
+                                        color: (team['netRunRate'] ?? 0.0) > 0.0
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           )

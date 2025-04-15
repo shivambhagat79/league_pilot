@@ -315,7 +315,7 @@ class MatchService {
       }
 
       // 3. Extract tournament ID and team names from the match.
-      String tournamentId = matchData['tournament'] ?? '';
+      String tournamentId = matchData['tournamentId'] ?? '';
       List<String> teamNames = List<String>.from(matchData['teams'] ?? []);
       if (teamNames.length < 2) {
         print("Not enough teams in match $matchId");
@@ -371,7 +371,7 @@ class MatchService {
 
       // 7. Retrieve the points distribution parameters from the match doc.
       // These could be stored in the match doc or extracted from the tournament doc.
-      int winPoints = matchData['winpoints'] ?? 3;
+      int winPoints = matchData['winpoints'] ?? 2;
       int losePoints = matchData['losepoints'] ?? 0;
       int drawPoints = matchData['drawpoints'] ?? 1;
 
@@ -384,7 +384,7 @@ class MatchService {
         team1Runs: team1Runs,
         team1Overs: team1OversDouble,
         team2Name: team2Name,
-        team2Runs: team1Runs,
+        team2Runs: team2Runs,
         team2Overs: team2OversDouble,
         winPoints: winPoints,
         losePoints: losePoints,
@@ -397,7 +397,6 @@ class MatchService {
       return false;
     }
   }
-
   /// Ends the specified sport by:
   /// 1) Fetching the tournament doc (to get gold/silver/bronze medal points).
   /// 2) Retrieving the sport's points table doc (e.g. "sport_football").
@@ -578,7 +577,7 @@ class MatchService {
       String tournamentId) {
     return _firestore
         .collection('matches')
-        .where('tournament', isEqualTo: tournamentId)
+        .where('tournamentId', isEqualTo: tournamentId)
         .orderBy('statusPriority')
         .snapshots();
   }
