@@ -105,27 +105,62 @@ class TournamentService {
 
     // 2) For each sport, create a doc with W/L/draw for each contingent
     for (var sport in sports) {
+      // Skip cricket: handle it separately.
+      if (sport.toLowerCase() == "cricket") {
+        continue;
+      }
       Map<String, dynamic> sportStandings = {};
       for (var contingent in contingents) {
         sportStandings[contingent] = {
-          "matchesPlayed": 0,
           "wins": 0,
           "losses": 0,
           "draws": 0,
-          "points": 0, // total points for that sport
+          "points": 0,
+          "goalDifference": 0,
+          "matchesPlayed": 0,
         };
       }
+      // Construct document ID, e.g. "sport_football", "sport_basketball", etc.
+      String docId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
 
-      // Example doc ID: "sport_football"
-      String docId = "sport_$sport".replaceAll(' ', '_').toLowerCase();
-
-      await _firestore
+      await FirebaseFirestore.instance
           .collection('tournaments')
           .doc(tournamentId)
           .collection('pointsTables')
           .doc(docId)
           .set({
         "standings": sportStandings,
+      });
+    }
+
+    // 2. Initialize a dedicated points table for Cricket (if cricket is in the sports list)
+    bool hasCricket = sports.any((s) => s.toLowerCase() == "cricket");
+    if (hasCricket) {
+      Map<String, dynamic> cricketStandings = {};
+      for (var contingent in contingents) {
+        cricketStandings[contingent] = {
+          "matchesPlayed": 0,
+          "wins": 0,
+          "losses": 0,
+          "draws": 0,
+          "points": 0,
+          // Cricket-specific fields:
+          "totalRunsScored": 0,
+          "totalRunsConceded": 0,
+          "oversPlayed": 0.0,
+          "oversBowled": 0.0,
+          "netRunRate": 0.0,
+        };
+      }
+      String cricketDocId =
+          "sport_cricket"; // You may force this name for cricket.
+      await FirebaseFirestore.instance
+          .collection('tournaments')
+          .doc(tournamentId)
+          .collection('pointsTables')
+          .doc(cricketDocId)
+          .set({
+        "standings": cricketStandings,
       });
     }
   }

@@ -104,7 +104,7 @@ class PointsService {
         final docId = doc.id;
 
         // Skip "general" doc or anything that doesn't match your naming scheme
-        if (docId == 'general' || !docId.startsWith('sport_')) {
+        if (docId == 'general' || docId=='sport_cricket'||!docId.startsWith('sport_')) {
           continue;
         }
 
