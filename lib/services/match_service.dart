@@ -210,7 +210,7 @@ class MatchService {
       }
 
       Map<String, dynamic> matchData = matchSnap.data() as Map<String, dynamic>;
-      String tournamentId = matchData['tournament'] ?? '';
+      String tournamentId = matchData['tournamentId'] ?? '';
       String sport = matchData['sport'] ?? 'unknown_sport';
 
       // e.g. ["teamAId", "teamBId"]
@@ -245,7 +245,7 @@ class MatchService {
       } else if (scoreB > scoreA) {
         verdict = "$contingentB won"; // the winner is ContingentB
       } else {
-        verdict = "draw";
+        verdict = "Draw";
       }
 
       // Step D: Update match doc with verdict and status
@@ -355,16 +355,16 @@ class MatchService {
       // 5. Determine the match verdict (winner or draw).
       String verdict;
       if (team1Runs > team2Runs) {
-        verdict = team1Name;
+        verdict = "$team1Name won";
       } else if (team2Runs > team1Runs) {
-        verdict = team2Name;
+        verdict = "$team2Name won";
       } else {
-        verdict = "draw";
+        verdict = "Draw";
       }
 
       // 6. Update the match document: set status to 'ended', statusPriority to 2, and verdict.
       await _firestore.collection('matches').doc(matchId).update({
-        'status': 'ended',
+        'status': 'results',
         'statusPriority': 2,
         'verdict': verdict,
       });
@@ -397,6 +397,7 @@ class MatchService {
       return false;
     }
   }
+
   /// Ends the specified sport by:
   /// 1) Fetching the tournament doc (to get gold/silver/bronze medal points).
   /// 2) Retrieving the sport's points table doc (e.g. "sport_football").

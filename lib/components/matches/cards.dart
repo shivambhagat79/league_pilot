@@ -81,14 +81,24 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     Column(
                       children: [
                         Text(
-                          widget.match['scoreboard']['teamScores']
-                                  [widget.match['teams'][0]]
-                              .toString(),
+                          (widget.match["sport"] == "Cricket")
+                              ? "${widget.match["scoreboard"][widget.match['teams'][0]]['runs'].toString()} / ${widget.match["scoreboard"][widget.match['teams'][0]]['wickets'].toString()}"
+                              : widget.match['scoreboard']['teamScores']
+                                      [widget.match['teams'][0]]
+                                  .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
+                        if (widget.match["sport"] == "Cricket")
+                          Text(
+                            "${widget.match["scoreboard"][widget.match['teams'][0]]['overs'].toString()} overs",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
                         Text(
                           widget.match['teams'][0],
                           style: TextStyle(
@@ -108,14 +118,24 @@ class _LiveNowCardState extends State<LiveNowCard> {
                     Column(
                       children: [
                         Text(
-                          widget.match['scoreboard']['teamScores']
-                                  [widget.match['teams'][1]]
-                              .toString(),
+                          (widget.match["sport"] == "Cricket")
+                              ? "${widget.match["scoreboard"][widget.match['teams'][1]]['runs'].toString()} / ${widget.match["scoreboard"][widget.match['teams'][1]]['wickets'].toString()}"
+                              : widget.match['scoreboard']['teamScores']
+                                      [widget.match['teams'][1]]
+                                  .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
+                        if (widget.match["sport"] == "Cricket")
+                          Text(
+                            "${widget.match["scoreboard"][widget.match['teams'][1]]['overs'].toString()} overs",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
                         Text(
                           widget.match['teams'][1],
                           style: TextStyle(
@@ -303,13 +323,24 @@ class ResultsCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          match['scoreboard']['teamScores'][match['teams'][0]]
-                              .toString(),
+                          (match["sport"] == "Cricket")
+                              ? "${match["scoreboard"][match['teams'][0]]['runs'].toString()} / ${match["scoreboard"][match['teams'][0]]['wickets'].toString()}"
+                              : match['scoreboard']['teamScores']
+                                      [match['teams'][0]]
+                                  .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
+                        if (match["sport"] == "Cricket")
+                          Text(
+                            "${match["scoreboard"][match['teams'][0]]['overs'].toString()} overs",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
                         Text(
                           match['teams'][0],
                           style: TextStyle(
@@ -329,13 +360,24 @@ class ResultsCard extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          match['scoreboard']['teamScores'][match['teams'][1]]
-                              .toString(),
+                          (match["sport"] == "Cricket")
+                              ? "${match["scoreboard"][match['teams'][1]]['runs'].toString()} / ${match["scoreboard"][match['teams'][1]]['wickets'].toString()}"
+                              : match['scoreboard']['teamScores']
+                                      [match['teams'][1]]
+                                  .toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
+                        if (match["sport"] == "Cricket")
+                          Text(
+                            "${match["scoreboard"][match['teams'][1]]['overs'].toString()} overs",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
                         Text(
                           match['teams'][1],
                           style: TextStyle(

@@ -79,6 +79,10 @@ class _SportsTableState extends State<SportsTable> {
                 DataColumn(
                   label: Text("Points"),
                 ),
+                if (widget.sport == "cricket")
+                  DataColumn(
+                    label: Text("NRR"),
+                  ),
               ],
               rows: widget.standings
                   .map(
@@ -86,11 +90,20 @@ class _SportsTableState extends State<SportsTable> {
                       cells: [
                         DataCell(Text(
                             (widget.standings.indexOf(team) + 1).toString())),
-                        DataCell(Text(team['contingentId'])),
+                        DataCell(Text(team['contingentName'])),
                         DataCell(Text(team['wins'].toString())),
                         DataCell(Text(team['losses'].toString())),
                         DataCell(Text(team['draws'].toString())),
                         DataCell(Text(team['points'].toString())),
+                        if (widget.sport == "cricket")
+                          DataCell(Text(
+                            team['netRunRate'].toStringAsFixed(3),
+                            style: TextStyle(
+                              color: (team['netRunRate'] ?? 0.0) > 0.0
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          )),
                       ],
                     ),
                   )

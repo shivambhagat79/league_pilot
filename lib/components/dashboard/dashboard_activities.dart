@@ -146,9 +146,12 @@ class _DashboardActivitiesState extends State<DashboardActivities> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Text(
-                                          match['scoreboard']['teamScores']
-                                                  [match['teams'][0]]
-                                              .toString(),
+                                          (match["sport"] == "Cricket")
+                                              ? "${match["scoreboard"][match['teams'][0]]['runs'].toString()} / ${match["scoreboard"][match['teams'][0]]['wickets'].toString()}"
+                                              : match['scoreboard']
+                                                          ['teamScores']
+                                                      [match['teams'][0]]
+                                                  .toString(),
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 30,
@@ -157,9 +160,12 @@ class _DashboardActivitiesState extends State<DashboardActivities> {
                                         ),
                                         Text("-"),
                                         Text(
-                                          match['scoreboard']['teamScores']
-                                                  [match['teams'][1]]
-                                              .toString(),
+                                          (match["sport"] == "Cricket")
+                                              ? "${match["scoreboard"][match['teams'][1]]['runs'].toString()} / ${match["scoreboard"][match['teams'][1]]['wickets'].toString()}"
+                                              : match['scoreboard']
+                                                          ['teamScores']
+                                                      [match['teams'][1]]
+                                                  .toString(),
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 30,

@@ -111,7 +111,8 @@ class _SportPageState extends State<SportPage> {
                                 if (widget.sport == "Cricket")
                                   DataCell(
                                     Text(
-                                      (team['netRunRate'] ?? 0.0).toString(),
+                                      (team['netRunRate'] ?? 0.0)
+                                          .toStringAsFixed(3),
                                       style: TextStyle(
                                         color: (team['netRunRate'] ?? 0.0) > 0.0
                                             ? Colors.green

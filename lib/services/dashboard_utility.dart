@@ -10,7 +10,7 @@ class DashboardService {
       // and limit to 5.
       QuerySnapshot snapshot = await _firestore
           .collection('matches')
-          .where('tournament', isEqualTo: tournamentId)
+          .where('tournamentId', isEqualTo: tournamentId)
           .orderBy('schedule.date', descending: true)
           .limit(5)
           .get();

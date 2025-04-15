@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/common/custom_scroll_page.dart';
 import 'package:hunger_games/pages/player/create_team.dart';
+import 'package:hunger_games/pages/player/player_qr_page.dart';
 import 'package:hunger_games/pages/tournament/tournaments.dart';
 import 'package:hunger_games/services/player_service.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
@@ -205,6 +206,26 @@ class _PlayerPageState extends State<PlayerPage> {
                   ),
                 ),
                 SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: FilledButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PlayerQRPage(
+                            playerEmail: widget.playerEmail,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: double.maxFinite,
+                      child: Text("View Your QR Code"),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: OutlinedButton(
