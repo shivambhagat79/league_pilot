@@ -4,7 +4,6 @@ import '../models/team.dart';
 class TeamService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   Future<String?> createTeam({
     required String tournamentId,
     required String contingentName,
@@ -16,14 +15,16 @@ class TeamService {
   }) async {
     try {
       // Retrieve the tournament document to extract the tournament name.
-      DocumentSnapshot tournamentSnap = await _firestore.collection('tournaments').doc(tournamentId).get();
+      DocumentSnapshot tournamentSnap =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
 
       if (!tournamentSnap.exists) {
         print("Tournament document not found for ID: $tournamentId");
         return null;
       }
 
-      Map<String, dynamic> tournamentData = tournamentSnap.data() as Map<String, dynamic>;
+      Map<String, dynamic> tournamentData =
+          tournamentSnap.data() as Map<String, dynamic>;
       String tournamentName = tournamentData['name'] ?? '';
 
       // Create a new team instance.
@@ -47,7 +48,8 @@ class TeamService {
       return null;
     }
   }
-   Future<Map<String, dynamic>?> getTeam({
+
+  Future<Map<String, dynamic>?> getTeam({
     required String tournamentId,
     required String contingent,
     required String sport,
@@ -75,7 +77,8 @@ class TeamService {
           .get();
 
       if (teamQuery.docs.isEmpty) {
-        print("No team found for tournament: $tournamentName, contingent: $contingent, sport: $sport");
+        print(
+            "No team found for tournament: $tournamentName, contingent: $contingent, sport: $sport");
         return null;
       }
 

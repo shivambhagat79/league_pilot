@@ -165,6 +165,42 @@ class TournamentService {
     }
   }
 
+  Future<String?> getTournamentId(String tournamentName) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('tournaments')
+          .where('name', isEqualTo: tournamentName)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot
+            .docs.first.id; // Return the first matching tournament ID
+      } else {
+        return null; // No tournament found with that name
+      }
+    } catch (e) {
+      print("Error retrieving tournament ID: $e");
+      return null;
+    }
+  }
+
+  Future<String> getTournamentName(String tournamentId) async {
+    try {
+      DocumentSnapshot snapshot =
+          await _firestore.collection('tournaments').doc(tournamentId).get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        return data['name']?.toString() ?? 'Unknown Tournament';
+      } else {
+        return 'Tournament not found';
+      }
+    } catch (e) {
+      print("Error retrieving tournament name: $e");
+      return 'Error retrieving tournament name';
+    }
+  }
+
   Future<List<Map<String, String>>> getActiveTournaments() async {
     try {
       QuerySnapshot snapshot = await _firestore
@@ -272,6 +308,7 @@ class TournamentService {
           'tournamentId': doc.id,
           'tournamentName': data['name'] ?? '',
           'hostInstitute': data['hostInstitute'] ?? '',
+          'status': data['status'] ?? 'unknown',
         };
       }).toList();
 
@@ -312,7 +349,6 @@ class TournamentService {
       // Build a document ID based on the sport name, e.g., "sport_football"
 
       String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
-
 
       // Retrieve the list of contingents from the tournament document.
       List<String> contingents = List<String>.from(data['contingents'] ?? []);
@@ -375,7 +411,7 @@ class TournamentService {
         });
 
         // Construct the sport doc ID (assuming the same convention used during addition).
-        String sportDocId = "sport_" + sport.replaceAll(' ', '_').toLowerCase();
+        String sportDocId = "sport_${sport.replaceAll(' ', '_').toLowerCase()}";
 
         // Remove the points table document for that sport.
         await _firestore

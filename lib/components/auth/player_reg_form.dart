@@ -58,6 +58,7 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
 
       if (userId != null) {
         await savePlayerLoginState(true);
+        await savePlayerEmail(email);
         await savePlayerId(result[0]!);
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +72,7 @@ class _PlayerRegFormState extends State<PlayerRegForm> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PlayerPage(),
+            builder: (context) => PlayerPage(playerEmail: email),
           ),
         );
 
