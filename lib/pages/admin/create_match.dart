@@ -92,21 +92,41 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
         _isLoading = true;
       });
 
-      String? matchId = await _matchService.createMatch(
-        sport: _selectedSport ?? "",
-        tournamentId: widget.tournamentId,
-        gender: _selectedGender ?? "Men",
-        winPoints1: _winController.text,
-        losePoints1: _lossController.text,
-        drawPoints1: _drawController.text,
-        venue: _venueController.text,
-        team1: _selectedContingent1 ?? "",
-        team2: _selectedContingent2 ?? "",
-        date: _date ?? DateTime.now(),
-        startTime: _startTime ?? TimeOfDay.now(),
-        endTime: _endTime ?? TimeOfDay.now(),
-        scorekeeperEmail: _scorekeeperController.text,
-      );
+      String? matchId;
+
+      if (_selectedSport == "Cricket") {
+        matchId = await _matchService.createCricketMatch(
+          sport: _selectedSport ?? "",
+          tournamentId: widget.tournamentId,
+          gender: _selectedGender ?? "Men",
+          winPoints1: _winController.text,
+          losePoints1: _lossController.text,
+          drawPoints1: _drawController.text,
+          venue: _venueController.text,
+          team1: _selectedContingent1 ?? "",
+          team2: _selectedContingent2 ?? "",
+          date: _date ?? DateTime.now(),
+          startTime: _startTime ?? TimeOfDay.now(),
+          endTime: _endTime ?? TimeOfDay.now(),
+          scorekeeperEmail: _scorekeeperController.text,
+        );
+      } else {
+        matchId = await _matchService.createMatch(
+          sport: _selectedSport ?? "",
+          tournamentId: widget.tournamentId,
+          gender: _selectedGender ?? "Men",
+          winPoints1: _winController.text,
+          losePoints1: _lossController.text,
+          drawPoints1: _drawController.text,
+          venue: _venueController.text,
+          team1: _selectedContingent1 ?? "",
+          team2: _selectedContingent2 ?? "",
+          date: _date ?? DateTime.now(),
+          startTime: _startTime ?? TimeOfDay.now(),
+          endTime: _endTime ?? TimeOfDay.now(),
+          scorekeeperEmail: _scorekeeperController.text,
+        );
+      }
 
       if (matchId != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -469,7 +489,7 @@ class _CreateMatchPageState extends State<CreateMatchPage> {
                                   });
                                 }
                               },
-                              child: Text('Select Date'),
+                              child: Text('Select Time'),
                             ),
                           ],
                         ),
