@@ -147,7 +147,7 @@ class LandingPage extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.large(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
@@ -157,7 +157,7 @@ class LandingPage extends StatelessWidget {
           );
         },
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        shape: CircleBorder(),
+        // shape: CircleBorder(),
         child: Icon(
           Icons.qr_code_scanner_rounded,
         ),

@@ -335,6 +335,7 @@ class _TournamentDataState extends State<TournamentData> {
                                                       "Failed to add image"),
                                                 ));
                                               }
+                                              _urlController.clear();
                                               Navigator.of(context).pop();
                                             }
                                           },
@@ -342,6 +343,7 @@ class _TournamentDataState extends State<TournamentData> {
                                         ),
                                         OutlinedButton(
                                           onPressed: () {
+                                            _urlController.clear();
                                             Navigator.of(context).pop();
                                           },
                                           child: Text("Close"),
