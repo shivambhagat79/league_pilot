@@ -3,6 +3,7 @@ import 'package:hunger_games/pages/admin/admin.dart';
 import 'package:hunger_games/pages/admin/roles.dart';
 import 'package:hunger_games/pages/player/player.dart';
 import 'package:hunger_games/pages/auth/player_auth.dart';
+import 'package:hunger_games/pages/qr_scanner/qr_scanner_page.dart';
 import 'package:hunger_games/pages/scorekeeper/scorekeeper.dart';
 import 'package:hunger_games/pages/tournament/tournaments.dart';
 import 'package:hunger_games/services/shared_preferences.dart';
@@ -147,7 +148,14 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.large(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => QrScannerPage(),
+            ),
+          );
+        },
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         shape: CircleBorder(),
         child: Icon(
