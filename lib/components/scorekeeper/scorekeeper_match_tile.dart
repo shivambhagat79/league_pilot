@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hunger_games/components/admin/score_update_dialog.dart';
+import 'package:hunger_games/components/admin/score_update_dialog_cricket.dart';
 import 'package:hunger_games/services/match_service.dart';
 import 'package:hunger_games/services/tournament_service.dart';
 
@@ -25,7 +26,7 @@ class _ScorekeeperMatchTileState extends State<ScorekeeperMatchTile> {
     setState(() {
       _isLoading = true;
     });
-    String tournamentId = widget.match['tournament'];
+    String tournamentId = widget.match['tournamentId'];
     String tournamentName =
         await _tournamentService.getTournamentName(tournamentId);
     setState(() {
@@ -72,8 +73,19 @@ class _ScorekeeperMatchTileState extends State<ScorekeeperMatchTile> {
               IconButton(
                 onPressed: () => showDialog(
                   context: context,
-                  builder: (context) => ScoreUpdateDialog(
-                      match: widget.match, matchId: widget.matchId),
+                  builder: (context) {
+                    if (widget.match["sport"] == "Cricket") {
+                      return ScoreUpdateDialogCricket(
+                        matchId: widget.matchId,
+                        match: widget.match,
+                      );
+                    } else {
+                      return ScoreUpdateDialog(
+                        matchId: widget.matchId,
+                        match: widget.match,
+                      );
+                    }
+                  },
                 ),
                 icon: Icon(Icons.scoreboard_outlined),
               ),
@@ -137,8 +149,15 @@ class _ScorekeeperMatchTileState extends State<ScorekeeperMatchTile> {
                               actions: [
                                 FilledButton(
                                   onPressed: () async {
-                                    bool success = await _matchService
-                                        .endMatch(widget.matchId);
+                                    bool success = false;
+
+                                    if (widget.match["sport"] == "Cricket") {
+                                      success = await _matchService
+                                          .endCricketMatch(widget.matchId);
+                                    } else {
+                                      success = await _matchService
+                                          .endMatch(widget.matchId);
+                                    }
 
                                     if (success) {
                                       ScaffoldMessenger.of(context)
